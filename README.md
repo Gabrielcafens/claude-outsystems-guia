@@ -72,6 +72,68 @@ código de cliente/empregador:
 Este repositório é privado justamente por causa disso — é espaço de estudo,
 não de divulgação.
 
+## Comandos prontos pra copiar e testar
+
+Ajuste o nome da app/tela pro seu caso real:
+
+**Explorar antes de mexer**
+```
+busca todos os módulos que têm "Cliente" no nome
+lista as entidades da app Financeiro
+mostra as telas que usam a entidade Pedido
+```
+
+**Editar**
+```
+adiciona um campo "telefone" (texto) na entidade Cliente
+cria uma validação obrigatória no campo CPF da tela de cadastro
+adiciona um botão "Exportar CSV" na tela de relatórios
+```
+
+**Publicar**
+```
+publica a app X no ambiente de desenvolvimento
+faz o deploy da última versão pra produção
+```
+
+**Biblioteca externa**
+```
+adiciona a biblioteca X (JS) como referência externa na app Y
+```
+
+## Glossário rápido
+
+| Termo | O que é |
+|---|---|
+| **MCP** | Model Context Protocol — o "cano" que deixa o Claude conversar com o tenant OutSystems em tempo real |
+| **Tenant** | O ambiente OutSystems (empresa ou pessoal) onde as apps vivem |
+| **Personal Area** | Ambiente OutSystems gratuito pra estudo/teste pessoal, sem risco de mexer em nada de produção |
+| **Service Studio** | O editor visual tradicional do OutSystems — o Claude edita por trás dele, via API |
+| **Publicar** | Compilar e ativar a versão editada da app no ambiente escolhido |
+
+## Perguntas frequentes
+
+**Preciso saber programar em OutSystems pra usar isso?**
+Ajuda entender a lógica (entidades, telas, ações), mas o Claude cuida da
+parte técnica de "como fazer" — você só precisa saber pedir o que quer.
+
+**O Claude publica sozinho sem eu mandar?**
+Não. Publicar/fazer deploy é uma ação que você pede explicitamente. Editar
+também deveria ser sempre revisado antes de publicar em ambiente sério.
+
+**Dá pra desfazer uma edição?**
+O OutSystems tem histórico de versões no Service Studio — sempre dá pra
+voltar pra uma versão anterior por lá, independente de como a edição foi
+feita.
+
+**Funciona em qualquer versão do OutSystems (O11, ODC)?**
+Não testado ainda — anotar aqui assim que confirmar em qual versão você
+está usando.
+
+## Limitações conhecidas (preencher conforme for testando)
+
+- [ ] *(ainda não testado o suficiente pra listar limitações reais)*
+
 ## Próximos passos
 
 - [ ] Testar o fluxo de busca de elementos num ambiente pessoal (Personal
