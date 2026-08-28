@@ -127,16 +127,37 @@ voltar pra uma versão anterior por lá, independente de como a edição foi
 feita.
 
 **Funciona em qualquer versão do OutSystems (O11, ODC)?**
-Não testado ainda — anotar aqui assim que confirmar em qual versão você
-está usando.
+Testado e confirmado em **ODC** (OutSystems Developer Cloud), com um tenant
+pessoal (`*.outsystems.dev`). Ainda não testado em **O11** (plataforma
+clássica) — atenção: são conceitos e interfaces bem diferentes (Service
+Center, Integration Studio, etc), então o skill pode não cobrir os mesmos
+recursos lá.
 
 ## Limitações conhecidas (preencher conforme for testando)
 
-- [ ] *(ainda não testado o suficiente pra listar limitações reais)*
+- Na primeira conexão, o registro dinâmico de cliente OAuth (Dynamic Client
+  Registration) pode falhar com **HTTP 404** mesmo com o tenant certo e
+  ativo. Resolvido rodando `/mcp` no Claude Code pra reautenticar e/ou
+  pedindo pro skill remover e re-registrar o servidor MCP.
+- O skill às vezes esquece a configuração do tenant entre uma invocação e
+  outra (perguntou o hostname de novo depois de já estar configurado) —
+  só reenviar o hostname resolve.
 
 ## Próximos passos
 
-- [ ] Testar o fluxo de busca de elementos num ambiente pessoal (Personal
-      Area) primeiro
+- [x] Conectar num ambiente pessoal (Personal Area / tenant ODC pessoal)
+- [x] Testar o fluxo de busca de elementos (`lista meus apps` — funcionou,
+      retornou todas as apps do tenant com tipo, revisão e data)
 - [ ] Documentar aqui os comandos que funcionaram bem, com exemplo real
-- [ ] Anotar limitações encontradas (o que o skill não consegue fazer ainda)
+      de edição/publicação (não só leitura)
+- [ ] Testar em tenant O11 pra comparar comportamento
+- [ ] Testar edição de tela/entidade de verdade e publicação
+
+## Projeto em andamento
+
+Usando essa integração pra transformar o app de estudo
+[os-prep](https://github.com/Gabrielcafens/os-prep) (simulados/flashcards
+pra certificação OutSystems, hoje um site estático simples) num app OutSystems
+real (ODC), construído a partir de um app de teste (`mecanicasteste`) no
+tenant pessoal — banco de perguntas por categoria, modo cronometrado,
+flashcards, pontuação e histórico de tentativas.
