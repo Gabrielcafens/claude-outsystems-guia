@@ -153,11 +153,47 @@ recursos lá.
 - [ ] Testar em tenant O11 pra comparar comportamento
 - [ ] Testar edição de tela/entidade de verdade e publicação
 
-## Projeto em andamento
+## Projeto em andamento (caso de teste real da integração)
 
-Usando essa integração pra transformar o app de estudo
-[os-prep](https://github.com/Gabrielcafens/os-prep) (simulados/flashcards
-pra certificação OutSystems, hoje um site estático simples) num app OutSystems
-real (ODC), construído a partir de um app de teste (`mecanicasteste`) no
-tenant pessoal — banco de perguntas por categoria, modo cronometrado,
-flashcards, pontuação e histórico de tentativas.
+Este é o caso de teste real usado pra validar a integração de ponta a ponta:
+transformar o app de estudo [os-prep](https://github.com/Gabrielcafens/os-prep)
+(simulados/flashcards pra certificação OutSystems, hoje um site estático
+simples) num app OutSystems real (ODC), construído a partir de um app de
+teste (`mecanicasteste`) no tenant pessoal — banco de perguntas por
+categoria, modo cronometrado, flashcards, pontuação e histórico de
+tentativas.
+
+### Log de progresso — 2026-08-28
+
+**Publicado com sucesso (revisão 8, ambiente Development):**
+- Modelo de dados completo: entidades `Categoria`, `ModoTentativa`,
+  `Pergunta`, `Opcao`, `Tentativa`, `TentativaResposta`
+- Backend: REST API `QuizAdminAPI` + Server Actions (`SeedPerguntas`,
+  `ContarPerguntas`, `ListarReferencia`, `IniciarTentativa`,
+  `RegistrarResposta`, `FinalizarTentativa`, `ObterEstatisticasPorCategoria`)
+- Banco de 123 perguntas com explicações escritas (46 recategorizadas do
+  `os-prep` original + 4 novas de Segurança + 73 novas cobrindo
+  Integration Studio, Lifecycle Management, Segurança e
+  Performance/Escalabilidade)
+
+**Bug encontrado (em aberto):** `ContarPerguntas` retorna `Total: 1` em vez
+de 123 — suspeita de erro num `ForEach`/agregação na Server Action de seed.
+Não afeta o que já foi publicado, só bloqueia a confirmação de que as 123
+perguntas foram salvas corretamente.
+
+**Erro de build corrigido durante o processo:** o Mentor usou uma
+propriedade obsoleta (`ServerActionPublicPropertyApp`, removida da
+plataforma) numa Server Action — identificado e corrigido automaticamente
+numa nova sessão do Mentor.
+
+**Bloqueio externo:** o **Mentor** (IA nativa do OutSystems ODC que o skill
+usa por trás pra gerar telas/lógica — cota separada da conta Claude/Anthropic)
+atingiu o limite de uso do tenant pessoal. Erro: `"Mentor is currently
+unavailable due to reached usage limits"` (código `OS-AISA-42903`), reset
+em ~8h. Dados já publicados não são afetados; só trava a criação das 6
+telas restantes (Home, Configurar Simulado, Simulado cronometrado,
+Resultado, Flashcards, Histórico) até o limite resetar.
+
+**Lição:** tenants pessoais/trial do ODC têm cota de Mentor limitada —
+pra projetos maiores/contínuos, considerar tenant corporativo ou espaçar
+os pedidos de geração de tela ao longo de várias sessões.
