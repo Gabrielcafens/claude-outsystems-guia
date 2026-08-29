@@ -17,6 +17,10 @@ pro Claude:
 Tudo isso a partir de comandos em linguagem natural, sem precisar ficar
 trocando de janela entre o Service Studio e o resto do trabalho.
 
+**Fontes oficiais:**
+- [OutSystems/outsystems-mcp](https://github.com/OutSystems/outsystems-mcp) — repositório oficial do skill/MCP que faz essa integração
+- [OutSystems/docs-odc](https://github.com/OutSystems/docs-odc) — documentação oficial do ODC, incluindo os códigos de erro e limites do Mentor (ex.: `OS-AISA-42903`)
+
 ## Pré-requisitos
 
 - Acesso a um ambiente OutSystems (Personal Area, dev, ou o tenant do
