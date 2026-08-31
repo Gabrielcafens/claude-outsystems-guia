@@ -76,3 +76,28 @@ Existem também dois erros de **taxa** (diferentes do limite diário):
 - Pedidos grandes (múltiplas telas de uma vez) são mais propensos a
   gastar cota com retrabalho — preferir pedir uma tela por vez com
   descrição clara, como já estava planejado pra retomada de amanhã.
+
+## Atualização — 28 a 30/08: confirmado na prática
+
+**O plano é gratuito/trial** (`personal-zkgbsms6.outsystems.dev`), o que
+explica a cota de Mentor apertada — não é bug nem limitação geral da
+OutSystems, é o nível esperado pra um tenant pessoal sem custo.
+
+**Contagem real de estouros:** 3 vezes em 3 dias (28/08 duas vezes,
+30/08 uma), **sempre em turnos que pediam múltiplas telas de uma vez**.
+Isso bate exatamente com o ponto 5 acima (turnos multi-tela são os mais
+caros) — na prática, não é só teoria.
+
+**O tier do modelo por trás do Claude Code também importa, não só o
+Mentor em si.** Rodar o turno com `Sonnet` + esforço "Baixo" produziu um
+turno com `internal_retry_count: 14` mesmo terminando "limpo" (0 erros).
+Trocar para `Opus` antes do próximo turno multi-tela é a recomendação
+oficial do skill, e a diferença de retries observada bate com o aviso
+oficial ("mid tiers are marginal... expensive on a hard multi-screen
+build").
+
+**Decisão tomada a partir disso:** parar de pedir várias telas por
+turno. Passar a construir **uma tela por vez, publicando entre cada
+uma** — rende menos por dia, mas um estouro de cota no meio custa no
+máximo uma tela, não o build inteiro. Ver `STATUS.md` para o plano de
+turnos detalhado por essa nova regra.
