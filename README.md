@@ -201,3 +201,41 @@ Resultado, Flashcards, Histórico) até o limite resetar.
 **Lição:** tenants pessoais/trial do ODC têm cota de Mentor limitada —
 pra projetos maiores/contínuos, considerar tenant corporativo ou espaçar
 os pedidos de geração de tela ao longo de várias sessões.
+
+> Log completo e atualizado do projeto (conversa, status técnico, dicas
+> de uso do Mentor) fica em [`os-prep-quiz-log/`](os-prep-quiz-log/) —
+> os arquivos abaixo eram o resumo de 28/08, veja a pasta pra estado atual.
+
+### Log de progresso — 2026-08-30 e 2026-08-31
+
+**Confirmado: o tenant é plano gratuito/trial.** Isso explica a cota de
+Mentor apertada.
+
+**Publicado com sucesso (revisão 12, 31/08 00:41 UTC):** telas **Home**
+e **Histórico**, identificação de dispositivo sem login (`DeviceId` via
+`localStorage`), e a Server Action `ObterHistorico`. 0 erros de validação.
+
+**Descoberta importante:** rodar o turno do Mentor com o Claude em
+**Sonnet + esforço baixo** produziu um turno com `internal_retry_count: 14`
+mesmo terminando limpo. A documentação oficial do skill recomenda o
+**tier de modelo mais forte (Opus)** justamente pra turnos multi-tela —
+confirmado na prática: trocar para Opus foi a mudança feita antes do
+turno seguinte.
+
+**3º estouro de cota do Mentor** aconteceu de novo no meio de um turno
+que pedia 3 telas de uma vez (ConfigurarSimulado + Simulado +
+ResultadoSimulado) — nada publicado quebrado, só o turno incompleto foi
+perdido. **Decisão tomada:** mudar a estratégia pra **uma tela por
+turno, publicando entre cada uma** — rende menos por dia, mas um
+estouro de cota custa no máximo uma tela, não o build inteiro. Detalhes
+completos e os prompts de cada turno estão em
+[`os-prep-quiz-log/STATUS.md`](os-prep-quiz-log/STATUS.md).
+
+### Achado à parte: bug real corrigido em outro projeto
+
+Enquanto o Mentor estava bloqueado, uma varredura rápida encontrou e
+corrigiu um bug de UX real no site estático
+[RangodoTuba](https://github.com/Gabrielcafens/RangodoTuba): o menu
+mobile não fechava sozinho depois de clicar num link de navegação —
+precisava de um segundo toque manual. Corrigido e mergeado em
+[PR #2](https://github.com/Gabrielcafens/RangodoTuba/pull/2).
