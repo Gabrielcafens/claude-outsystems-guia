@@ -17,7 +17,7 @@ Plano completo salvo em: `C:\Users\gabriel.cafe\.claude\plans\gleaming-riding-sw
 - **Tenant:** `personal-zkgbsms6.outsystems.dev`
 - **Ambiente (Development):** `b2a33b20-dc33-4d31-9890-6b3aded35fac`
 - **URL runtime:** `https://personal-zkgbsms6-dev.outsystems.app/mecanicasteste`
-- **Mentor session_id (sessão em andamento):** `aa6e1653-9a41-407c-b066-381a8ef2d987` (iniciada 30/08 ~21:26; a antiga `476dd242-edd4-440d-8c15-a8daf500250a` foi abandonada — token não foi salvo e a sessão já tinha passado do GC de 30min)
+- **Mentor session_id (sessão em andamento):** `550a7b97-d55f-41a9-a670-eae84bc4fece` (iniciada 31/08 ~21:10, Turno 1 = ConfigurarSimulado). Sessões anteriores abandonadas: `aa6e1653-9a41-407c-b066-381a8ef2d987` (30/08, perdida no estouro de cota) e `476dd242-edd4-440d-8c15-a8daf500250a` (28/08)
 - **Revisão publicada mais recente:** **12** (publicada 31/08 00:41 UTC — deployment `2b5e93ee-75a3-486a-b0ea-df60cb9a20d4`)
 
 > **Nota de retomada (30/08):** o Mentor voltou a funcionar. Run `0c386cff-031e-4108-a9eb-07fb94035ab1` concluído com sucesso e **publicado na revisão 12** — itens 1–4 da lista "O que FALTA" estão prontos e no ar (DeviceId, ObterHistorico, telas Home e Historico), 0 erros de validação.
@@ -66,17 +66,19 @@ Payload completo do seed salvo em (não apagar até finalizar o projeto):
 
 Gabriel autorizou publicar automaticamente cada etapa assim que o turno do Mentor terminar e validar sem erros, **sem perguntar de novo**, até acabar todas as telas restantes e renomear o app. Interromper e chamar ele só se: (a) der erro que precise de decisão, (b) bater o limite do Mentor de novo, ou (c) terminar tudo.
 
-## ⚠️ Bloqueio atual (30/08 ~21:55): cota do Mentor estourou de novo
+## ⚠️ Bloqueio atual (31/08 ~21:36): cota do Mentor estourou de novo
 
-O run `0f06284b-12f8-42d8-9ec8-35874c9d981f` (ConfigurarSimulado + Simulado + ResultadoSimulado) foi **interrompido no meio** por `OS-AISA-42903` — "Mentor is currently unavailable due to reached usage limits. **Limit resets in 23h 05min**" → disponível de novo em **31/08 por volta das 21:00** (horário local).
+O run `62ff3b67-a949-4abe-ab1f-1aaeb1484cb8` (Turno 3 = ResultadoSimulado) foi **interrompido no meio** por `OS-AISA-42903` — "Mentor is currently unavailable due to reached usage limits. **Limit resets in 23h 23min**" → disponível de novo em **01/09 por volta das 21:00** (horário local).
 
 Estado do turno interrompido:
-- `validation.error_count: 1` → **Invalid Client Action Flow** (o fluxo do simulado ficou pela metade)
-- `internal_retry_count: 11`
-- **Nada foi publicado** — e não deveria ser: o turno tem erro de validação e carrega `turn_error`, então o `publish_start` recusaria com `mentor_run_not_clean` de qualquer forma.
-- A revisão **12 continua intacta e no ar**. Nada quebrou.
+- `validation.error_count: 0`, mas o resultado carrega `turn_error` → o `publish_start` recusaria com `mentor_run_not_clean`, porque o OML da sessão pode ter só parte da mudança. **Nada foi publicado, corretamente.**
+- `internal_retry_count: 2`
+- **As revisões 13 e 14 continuam intactas e no ar.** ConfigurarSimulado e Simulado funcionando. Nada quebrou.
 
-**As edições parciais do simulado serão perdidas** — a sessão do Mentor sofre GC depois de 30 min ociosa, e o reset é só daqui a 23h. Isso não é problema: o trabalho estava incompleto e com erro. Na retomada, começar uma **sessão nova** com `app_key` (re-baixa a revisão 12, que é limpa). **Nunca criar um app novo.**
+As edições parciais do ResultadoSimulado serão perdidas (GC da sessão em 30 min, reset só em 23h). Na retomada, começar uma **sessão nova** com `app_key`, que re-baixa a revisão 14 — limpa e com os Turnos 1 e 2 já dentro. **Nunca criar um app novo.**
+
+### Histórico de estouros de cota
+Quatro até agora: 28/08 (duas vezes), 30/08, 31/08. Sempre no meio de um turno. Observação: a estratégia de uma tela por turno **funcionou** — desta vez o estouro custou só o Turno 3, enquanto em 30/08 custou os três turnos juntos. Vale conferir no Portal ODC qual é a cota diária de IA do plano/trial deste tenant.
 
 ## 🔑 ESTRATÉGIA DE BUILD (decidida por Gabriel em 30/08) — UMA TELA POR TURNO
 
@@ -90,10 +92,10 @@ Estado do turno interrompido:
 
 Em todos: reaproveitar as Server Actions existentes `IniciarTentativa`, `RegistrarResposta`, `FinalizarTentativa` e `ObterEstatisticasPorCategoria` — mandar o Mentor **inspecionar as assinaturas antes** de ligar as telas, não reescrever a lógica. Usar `IsMandatory=True` nos inputs obrigatórios e **não** colocar asterisco literal no texto do label (a plataforma pinta o dela). Manter a UI consistente com Home e Historico.
 
-**Turno 1 — ConfigurarSimulado**
+**Turno 1 — ConfigurarSimulado** ✅ **PUBLICADO na revisão 13** (01/09 00:17 UTC, deployment `537ef6d5-9aeb-49de-a3cf-195f497d4a7b`). Aggregate `GetAllCategorias` + dropdown de Categoria com opção vazia para "todas"; RadioGroups de quantidade (10/20/30) e tempo (10/20/30 min); botão chama `ObterDeviceId` + `IniciarTentativa`; botão "Iniciar Simulado" da Home religado. 0 erros de validação.
 Escolher Categoria (com opção "todas", já que `CategoriaId` é nullable → `NullIdentifier`), quantidade de perguntas (10/20/30, default 10) e tempo em minutos (10/20/30, default 20) convertido para `TempoLimiteSegundos`. Botão "Começar Simulado" chama `ObterDeviceId` + `IniciarTentativa` e navega para a tela Simulado passando o `TentativaId` — como Simulado ainda não existe neste turno, deixar a navegação como placeholder e religar no Turno 2. Link "Voltar" para Home. **Também religar o botão "Iniciar Simulado" da Home**, que hoje aponta para a própria Home. → publicar
 
-**Turno 2 — Simulado**
+**Turno 2 — Simulado** ✅ **PUBLICADO na revisão 14** (01/09 00:28 UTC, deployment `de68d64c-067e-48d4-a9e7-ea39598ec339`). Input `TentativaId`; aggregates `GetTentativa` + `GetPerguntasDaTentativa` (uma pergunta por vez) + `GetOpcoesDaPergunta`; timer mm:ss via `setInterval` → action `TimerTick` → `FinalizarTentativa` ao zerar; barra "Pergunta X de N"; botões de opção desabilitam após responder; painel de feedback com certo/errado + opção correta + `Explicacao`; botão "Proxima". ConfigurarSimulado religado para navegar para cá. 0 erros, `internal_retry_count` 5 (contra 13 no turno anterior — escopo menor converge mais rápido).
 Input `TentativaId`. Uma pergunta por vez com suas `Opcao`; timer regressivo mm:ss client-side que ao zerar chama `FinalizarTentativa`; indicador de progresso (atual/total); ao escolher uma opção chama `RegistrarResposta` e mostra feedback imediato (certo/errado + `Explicacao`), com botão "Próxima". Depois da última, `FinalizarTentativa`. Navegação para ResultadoSimulado fica placeholder até o Turno 3. **Religar a navegação de ConfigurarSimulado para cá.** → publicar
 
 **Turno 3 — ResultadoSimulado**
