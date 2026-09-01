@@ -231,6 +231,29 @@ estouro de cota custa no máximo uma tela, não o build inteiro. Detalhes
 completos e os prompts de cada turno estão em
 [`os-prep-quiz-log/STATUS.md`](os-prep-quiz-log/STATUS.md).
 
+### Log de progresso — 2026-08-31 (noite) a 2026-09-01
+
+**A estratégia de uma tela por turno funcionou na prática.** Turno 1
+(ConfigurarSimulado) publicado limpo na revisão 13; Turno 2 (Simulado,
+com timer regressivo, feedback imediato e explicação) publicado limpo
+na revisão 14 — e o `internal_retry_count` caiu de 14 para 5 nesse
+turno, sugerindo que o escopo menor por turno também reduz o atrito
+interno do Mentor, não só o risco de perda. O Turno 3 (ResultadoSimulado)
+foi cortado no meio pelo **4º estouro de cota** (`OS-AISA-42903`) — mas
+dessa vez o estouro custou só 1 tela em vez de 3, confirmando o valor da
+mudança de estratégia.
+
+**Fluxo real testável agora:**
+`https://personal-zkgbsms6-dev.outsystems.app/mecanicasteste` — Home →
+Iniciar Simulado → configurar categoria/quantidade/tempo → responder
+com timer e feedback (falta só a tela de resultado no fim, que hoje
+volta direto pra Home).
+
+**Detalhe operacional novo:** o token de autenticação MCP expirou de um
+dia para o outro, exigindo re-rodar `/mcp` antes de retomar — vale
+sempre checar a autenticação primeiro ao reabrir uma sessão depois de
+~24h.
+
 ### Achado à parte: bug real corrigido em outro projeto
 
 Enquanto o Mentor estava bloqueado, uma varredura rápida encontrou e
