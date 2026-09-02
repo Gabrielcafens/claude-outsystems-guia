@@ -17,8 +17,8 @@ Plano completo salvo em: `C:\Users\gabriel.cafe\.claude\plans\gleaming-riding-sw
 - **Tenant:** `personal-zkgbsms6.outsystems.dev`
 - **Ambiente (Development):** `b2a33b20-dc33-4d31-9890-6b3aded35fac`
 - **URL runtime:** `https://personal-zkgbsms6-dev.outsystems.app/mecanicasteste`
-- **Mentor session_id (sessão em andamento):** `550a7b97-d55f-41a9-a670-eae84bc4fece` (iniciada 31/08 ~21:10, Turno 1 = ConfigurarSimulado). Sessões anteriores abandonadas: `aa6e1653-9a41-407c-b066-381a8ef2d987` (30/08, perdida no estouro de cota) e `476dd242-edd4-440d-8c15-a8daf500250a` (28/08)
-- **Revisão publicada mais recente:** **12** (publicada 31/08 00:41 UTC — deployment `2b5e93ee-75a3-486a-b0ea-df60cb9a20d4`)
+- **Mentor session_id:** nenhuma aberta — a última (`89c94845-e03b-4e2d-a258-d993826b6850`) foi encerrada em 01/09 ao concluir o build
+- **Revisão publicada mais recente:** **16** (01/09 — Flashcards, publish key `98a57d30-3ea6-4949-a75e-32b732f33f02`)
 
 > **Nota de retomada (30/08):** o Mentor voltou a funcionar. Run `0c386cff-031e-4108-a9eb-07fb94035ab1` concluído com sucesso e **publicado na revisão 12** — itens 1–4 da lista "O que FALTA" estão prontos e no ar (DeviceId, ObterHistorico, telas Home e Historico), 0 erros de validação.
 
@@ -66,19 +66,46 @@ Payload completo do seed salvo em (não apagar até finalizar o projeto):
 
 Gabriel autorizou publicar automaticamente cada etapa assim que o turno do Mentor terminar e validar sem erros, **sem perguntar de novo**, até acabar todas as telas restantes e renomear o app. Interromper e chamar ele só se: (a) der erro que precise de decisão, (b) bater o limite do Mentor de novo, ou (c) terminar tudo.
 
-## ⚠️ Bloqueio atual (31/08 ~21:36): cota do Mentor estourou de novo
+## 🎯 FASE 2 (01–02/09): virar simulado real da prova O11
 
-O run `62ff3b67-a949-4abe-ab1f-1aaeb1484cb8` (Turno 3 = ResultadoSimulado) foi **interrompido no meio** por `OS-AISA-42903` — "Mentor is currently unavailable due to reached usage limits. **Limit resets in 23h 23min**" → disponível de novo em **01/09 por volta das 21:00** (horário local).
+Contexto novo que o Gabriel deu: ele está estudando para a **certificação O11 Associate Reactive Developer**, já reprovou duas vezes com 54%, precisa de 70%. **Nada sobre reprovação pode aparecer na aplicação** — só desempenho por assunto. A prova real tem **50 questões**; tempo exato ele não lembra (usando 90 min como padrão de treino); assumindo **múltipla escolha simples** por enquanto.
 
-Estado do turno interrompido:
-- `validation.error_count: 0`, mas o resultado carrega `turn_error` → o `publish_start` recusaria com `mentor_run_not_clean`, porque o OML da sessão pode ter só parte da mudança. **Nada foi publicado, corretamente.**
-- `internal_retry_count: 2`
-- **As revisões 13 e 14 continuam intactas e no ar.** ConfigurarSimulado e Simulado funcionando. Nada quebrou.
+Pontos do relatório dele: **0%** em Client e Server Actions, Eventos de Blocos, Fluxos Lógicos, Usando Blocos · **33%** em Entidades e Entidades Estáticas e Validações de Formulários · **66%** em Aggregates · bom em Bootstrap, Botões, Ciclo de Vida de Telas, Client Variables, Dependências Modulares, Relações entre Dados e Segurança por Roles.
 
-As edições parciais do ResultadoSimulado serão perdidas (GC da sessão em 30 min, reset só em 23h). Na retomada, começar uma **sessão nova** com `app_key`, que re-baixa a revisão 14 — limpa e com os Turnos 1 e 2 já dentro. **Nunca criar um app novo.**
+### ✅ Fase 2 concluída — revisões 17 a 21 (sessão do Mentor `aff67572-1f5b-4020-b770-5d73a5a2de81` encerrada)
 
-### Histórico de estouros de cota
-Quatro até agora: 28/08 (duas vezes), 30/08, 31/08. Sempre no meio de um turno. Observação: a estratégia de uma tela por turno **funcionou** — desta vez o estouro custou só o Turno 3, enquanto em 30/08 custou os três turnos juntos. Vale conferir no Portal ODC qual é a cota diária de IA do plano/trial deste tenant.
+| Rev | Mudança |
+|---|---|
+| **17** | App renomeado para "OS Prep Quiz" pelo Gabriel no Portal ODC (o Mentor não consegue). ⚠️ **A URL mudou** para `https://personal-zkgbsms6-dev.outsystems.app/OSPrepQuiz` — a antiga `/mecanicasteste` morreu |
+| **18** | Simulado em **modo prova**: `RegistrarResposta` continua gravando, mas nada é revelado durante o exame. Painel de feedback, botão "Proxima" e as variáveis `RespostaCorreta`/`ExplicacaoCorreta`/`OpcaoCorretaTexto` removidos |
+| **19** | ResultadoSimulado vira **gabarito completo**: todas as questões (não só as erradas), cada uma com opção escolhida, correta, marcador visual e `Explicacao` — **inclusive nos acertos**, para revelar acertos por sorte. Linhas compactas e expansíveis para aguentar 50 questões |
+| **20** | **50 questões e 90 minutos como padrão** (10/20/30 continuam para treino curto). Proteção nova: se a Categoria escolhida tiver menos perguntas ativas que o pedido, o app avisa e roda com o que existe em vez de falhar ou encurtar em silêncio |
+| **21** | **Taxonomia nova**: as 7 categorias dos objetivos reais da prova substituem as 5 antigas. As 123 perguntas antigas foram **desativadas, não apagadas** |
+
+### As 7 categorias novas
+`ClientServerActions` · `EventosBlocos` · `FluxosLogicos` · `UsandoBlocos` · `Entidades` · `ValidacoesFormularios` · `Aggregates`
+
+### ⚠️ ESTADO ATUAL: ZERO perguntas ativas
+Isso é esperado, não um bug. As 123 antigas foram desativadas com a troca de taxonomia e o banco novo ainda não foi escrito. **Um simulado agora não inicia** (a proteção da rev 20 avisa em vez de quebrar).
+
+**Próximo trabalho: escrever o banco de perguntas.** Rota: endpoint REST `SeedPerguntas` que já existe (secret `seed-os-prep-2026`) — **não consome cota do Mentor**, é só um POST. O que falta é o conteúdo: as perguntas em si, com 4 alternativas, a correta e a explicação. Peso: primeiro os quatro 0% (Client e Server Actions, Eventos de Blocos, Fluxos Lógicos, Usando Blocos), depois os 33% (Entidades e Entidades Estáticas, Validações de Formulários), por último Aggregates (66%).
+
+### Ainda não testado
+Nenhuma das revisões 17–21 foi clicada. Todas passaram na validação do OutSystems com 0 erros, mas isso é análise estática. Falta rodar o fluxo real.
+
+## ✅ FASE 1 COMPLETA (01/09) — revisão 16
+
+Todas as telas planejadas estão construídas e publicadas. Sessão do Mentor `89c94845-e03b-4e2d-a258-d993826b6850` encerrada.
+
+**Seis telas no ar:** Home, Historico, ConfigurarSimulado, Simulado, ResultadoSimulado, Flashcards.
+**Revisões desta noite:** 13 (ConfigurarSimulado), 14 (Simulado), 15 (ResultadoSimulado), 16 (Flashcards).
+
+**Pendência única, manual:** renomear a aplicação para "OS Prep Quiz" no Portal ODC (o Mentor não consegue — ver Turno 5 abaixo).
+
+**Ainda não testado de verdade:** todos os turnos passaram na validação do OutSystems com 0 erros, mas validação é análise estática, não prova de que o app funciona. Falta clicar o fluxo completo (configurar → responder com o timer rodando → deixar terminar → conferir resultado e revisão das erradas) e o baralho de flashcards.
+
+### Histórico de estouros de cota do Mentor
+Quatro no total: 28/08 (duas vezes), 30/08, 31/08 — sempre no meio de um turno. **A estratégia de uma tela por turno funcionou:** em 30/08 o estouro custou três telas de uma vez; em 31/08 custou só uma. Nas noites de 31/08→01/09 os quatro turnos passaram sem estourar. Outro padrão: o token OAuth da OutSystems expirou de um dia para o outro nas duas retomadas, e nesse estado os tools `authenticate`/`complete_authentication` não ficam expostos — a saída é o usuário rodar `/mcp` → outsystems → Authenticate.
 
 ## 🔑 ESTRATÉGIA DE BUILD (decidida por Gabriel em 30/08) — UMA TELA POR TURNO
 
@@ -98,14 +125,15 @@ Escolher Categoria (com opção "todas", já que `CategoriaId` é nullable → `
 **Turno 2 — Simulado** ✅ **PUBLICADO na revisão 14** (01/09 00:28 UTC, deployment `de68d64c-067e-48d4-a9e7-ea39598ec339`). Input `TentativaId`; aggregates `GetTentativa` + `GetPerguntasDaTentativa` (uma pergunta por vez) + `GetOpcoesDaPergunta`; timer mm:ss via `setInterval` → action `TimerTick` → `FinalizarTentativa` ao zerar; barra "Pergunta X de N"; botões de opção desabilitam após responder; painel de feedback com certo/errado + opção correta + `Explicacao`; botão "Proxima". ConfigurarSimulado religado para navegar para cá. 0 erros, `internal_retry_count` 5 (contra 13 no turno anterior — escopo menor converge mais rápido).
 Input `TentativaId`. Uma pergunta por vez com suas `Opcao`; timer regressivo mm:ss client-side que ao zerar chama `FinalizarTentativa`; indicador de progresso (atual/total); ao escolher uma opção chama `RegistrarResposta` e mostra feedback imediato (certo/errado + `Explicacao`), com botão "Próxima". Depois da última, `FinalizarTentativa`. Navegação para ResultadoSimulado fica placeholder até o Turno 3. **Religar a navegação de ConfigurarSimulado para cá.** → publicar
 
-**Turno 3 — ResultadoSimulado**
+**Turno 3 — ResultadoSimulado** ✅ **PUBLICADO na revisão 15** (01/09, publish key `7cec048a-47f6-44c4-9c7e-a2c23a954106`). Structure `DetalheRespostaItem` + Server Action `ObterDetalhesRespostas` (SQL avançado unindo TentativaResposta/Pergunta/Categoria/Opcao numa chamada); tela com card de resumo (Pontuacao %, Acertos/TotalPerguntas, tempo decorrido), quebra por Categoria e lista das erradas com opção escolhida, correta e `Explicacao`; botões "Novo Simulado" e "Voltar ao Inicio". Simulado religado para navegar para cá ao fim do tempo ou da última pergunta. 0 erros.
 Input `TentativaId`. Mostra `Pontuacao`, `Acertos`/`TotalPerguntas`, tempo gasto, quebra por Categoria, e a lista das erradas com a opção correta e a `Explicacao`. Botões "Novo Simulado" (→ ConfigurarSimulado) e "Voltar ao Início" (→ Home). Se precisar, criar uma Server Action/Structure extra que devolva as respostas de uma Tentativa com opção escolhida + correta + explicação. **Religar as navegações do Turno 2 para cá.** → publicar
 
-**Turno 4 — Flashcards**
+**Turno 4 — Flashcards** ✅ **PUBLICADO na revisão 16** (01/09, publish key `98a57d30-3ea6-4949-a75e-32b732f33f02`). Modo de estudo sem pontuação: escolha de Categoria com opção "Todas as categorias" que recarrega o baralho; carta com frente (`Enunciado`) e verso (opção correta + `Explicacao`); botão para virar; navegação Anterior/Próxima com contador "Carta X de N"; mensagem própria quando a categoria não tem perguntas; link Voltar. Botão "Modo Flashcard" da Home religado. 0 erros.
 Modo de estudo com cartões frente/verso por Categoria, usando `Pergunta`/`Opcao`/`Explicacao`. **Religar o botão "Modo Flashcard" da Home**, hoje placeholder. → publicar
 
-**Turno 5 — Renomear o app para "OS Prep Quiz"**
-Tentar via Mentor. Uma tentativa anterior falhou; se falhar de novo, **não insistir** — avisar Gabriel para fazer manualmente no Portal ODC.
+**Turno 5 — Renomear o app para "OS Prep Quiz"** ⚠️ **NÃO É POSSÍVEL VIA MENTOR** (confirmado 01/09, segunda tentativa). O Mentor respondeu que o nome da aplicação precisa ser alterado direto no **Portal ODC, nas configurações da aplicação** — ele não tem acesso a isso. Nada foi publicado neste turno (`changeApplied: false`).
+
+Ponto importante: o Mentor verificou que **todo o texto visível dentro do app já diz "OS Prep Quiz"**. O que continua como `mecanicasteste` é só o nome da aplicação no Portal e na URL. **Ação manual pendente para o Gabriel** (leva segundos no Portal).
 
 ## ⏳ O que FALTA (telas e lógica de tela)
 

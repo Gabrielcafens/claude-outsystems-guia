@@ -249,6 +249,57 @@ Iniciar Simulado → configurar categoria/quantidade/tempo → responder
 com timer e feedback (falta só a tela de resultado no fim, que hoje
 volta direto pra Home).
 
+### Log de progresso — 2026-09-01 (noite): Fase 1 completa + virada pra simulado real
+
+**Fase 1 fechada, revisão 16.** Os turnos 3 (ResultadoSimulado) e 4
+(Flashcards) publicaram limpos, sem estourar cota — quatro turnos numa
+noite só, zero estouros, confirmando de vez a estratégia de uma tela
+por turno. As 6 telas planejadas ficaram no ar: Home, Histórico,
+ConfigurarSimulado, Simulado, ResultadoSimulado, Flashcards. Único
+pendente: o Mentor **não consegue renomear o app via API** (confirmado
+2x) — o nome no Portal ODC precisa ser trocado manualmente, mesmo com
+todo o texto visível dentro do app já dizendo "OS Prep Quiz". Gabriel
+fez isso manualmente: app renomeado, **URL mudou** para
+`https://personal-zkgbsms6-dev.outsystems.app/OSPrepQuiz` (revisão 17).
+
+**Guinada de escopo — de "quiz de estudo" pra "simulado real de
+certificação".** Gabriel esclareceu o objetivo verdadeiro: prep pra
+certificação **O11 Associate Reactive Developer** (2 reprovações a
+54%, meta 70%), com um relatório de desempenho real listando pontos
+fracos por assunto. Isso disparou uma segunda fase de turnos:
+
+- **Rev 18** — Simulado vira modo prova de verdade: nada de feedback
+  durante o exame (removido painel "certo/errado" + explicação em
+  tempo real).
+- **Rev 19** — ResultadoSimulado vira gabarito comentado completo:
+  todas as questões (não só as erradas), com explicação inclusive nos
+  acertos, pra pegar quem acertou no chute.
+- **Rev 20** — Formato ajustado pro exame real: **50 questões, 90
+  minutos** como padrão (a prova O11 é 50 questões; tempo exato o
+  Gabriel não lembrava, 90min foi estimativa de treino). Adicionada
+  validação pra não quebrar se uma categoria tiver menos perguntas
+  ativas que o pedido.
+- **Rev 21** — **As 5 categorias genéricas (Service Studio, Integration
+  Studio...) foram substituídas pelas 7 categorias reais do relatório
+  de desempenho do Gabriel**: Client/Server Actions, Eventos de Blocos,
+  Fluxos Lógicos, Usando Blocos, Entidades, Validações de Formulário,
+  Aggregates. As 123 perguntas antigas foram desativadas (não
+  apagadas) por não servirem mais pro objetivo real.
+
+**Estado atual: zero perguntas ativas, e é esperado.** A troca de
+taxonomia esvaziou o banco visível — o simulado avisa e não inicia até
+alguém escrever o banco novo. Esse é o próximo trabalho: perguntas
+reais focadas nos pontos fracos verdadeiros do Gabriel, priorizando os
+quatro tópicos zerados no relatório. A boa notícia é que popular o
+banco é via endpoint REST direto (não consome cota do Mentor).
+
+**Aula de tutoria em paralelo:** essa mesma sessão do Claude também deu
+uma aula sobre os quatro tópicos zerados (Client vs Server Action,
+nós de fluxo lógico exclusivos de cada um, Blocos e Eventos de Bloco),
+confirmando que o par "app de simulado real + conversa de tutoria" é o
+combo certo — simulado treina formato/memória, conversa resolve o
+buraco conceitual de verdade.
+
 **Detalhe operacional novo:** o token de autenticação MCP expirou de um
 dia para o outro, exigindo re-rodar `/mcp` antes de retomar — vale
 sempre checar a autenticação primeiro ao reabrir uma sessão depois de
