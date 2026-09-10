@@ -174,15 +174,67 @@ Outros artigos do mesmo autor, relacionados:
 - Web Component in Action, using OutSystems
 - Stop using Grid and Gutter: start using Flex in OutSystems
 
-## Limitações conhecidas (preencher conforme for testando)
+## POC testado: HelloAiBlock (ODC, app AiSandbox)
+
+Testamos a técnica do artigo na prática, num app ODC de sandbox chamado
+`AiSandbox`, com um Block `HelloAiBlock`. Resultado: **funcionou de ponta a
+ponta**, incluindo a parte de comunicação bidirecional.
+
+**O que foi montado:**
+- Block `HelloAiBlock` com Input Parameter `Nome` (Text), um Container vazio
+  (`JsMountPoint`) e uma Local Variable `Instance` (Object)
+- Handlers: `OnReady` cria a instância JS (`new AiSandbox.HelloAiBlock({...})`),
+  `OnParametersChanged` repassa o novo valor, `OnDestroy` limpa o DOM
+- Script Resource `HelloAiBlock.js` (JS puro, sem tipos — o Resource do ODC
+  não aceita `interface`/`private`/anotações TS) associado via
+  `RequiredScripts`, carregando antes do `OnReady`
+- Tela de teste `TestHelloAi` com um input ligado a `Nome` e o Block
+
+**Resultado visual confirmado via DevTools:** o `div` estilizado (borda,
+padding, border-radius) apareceu corretamente dentro do `JsMountPoint`,
+provando que o high-code está realmente controlando o DOM, não só texto cru.
+
+**Evento bidirecional (high-code → OutSystems):**
+- Tentativa direta `events: { OnGreetClicked: $actions.OnGreetClicked }`
+  **falhou** — dentro de um JS node do ODC, `$actions` só resolve **Client
+  Actions**, não Block Events diretamente (`Invalid JavaScript — Unknown
+  'OnGreetClicked' action`).
+- **Solução que funcionou:** criar uma Client Action pública ponte
+  (`TriggerGreetClicked(Timestamp: Text)`) cujo único fluxo é disparar o
+  Event `OnGreetClicked`. No JS node, passar `$actions.TriggerGreetClicked`
+  (isso sim resolve, por ser uma Client Action). O TypeScript continua
+  chamando `this.events.OnGreetClicked(timestamp)` normalmente — a
+  indireção fica só do lado do Block.
+- Testado ao vivo: clique no botão "Disparar evento" (renderizado pelo
+  script) → Client Action ponte → Event do Block → Screen Action no
+  OutSystems mostrou o toast "Evento recebido do high-code! Timestamp:
+  2026-09-10T15:57:17.550Z".
+
+**Conclusão prática:** a técnica do artigo funciona igual em ODC. O único
+ajuste necessário em relação ao texto original é essa ponte de Client Action
+pra Events dentro de JS nodes — não estava explícito no artigo, mas é
+consequência direta de como o compilador do ODC valida `$actions`.
+
+Transcript completo da sessão (prompts enviados, respostas do agente, erros
+e correções) em [poc-hello-ai-block-transcript.md](poc-hello-ai-block-transcript.md).
+
+## Limitações conhecidas
 
 - [x] MCP oficial não funciona em O11 (Traditional/Reactive), só ODC — ver
       alternativa de Block+high-code acima
-- [ ] *(demais limitações — ainda não testado o suficiente pra listar)*
+- [x] `$actions` dentro de um JS node não resolve Block Events diretamente —
+      precisa de uma Client Action ponte (ver seção do POC acima)
+- [ ] Placeholders (Slots) ainda não testados na prática
+- [ ] Comportamento em O11 Traditional/Reactive (Expression em vez de
+      handler) ainda não testado na prática, só descrito no artigo
 
 ## Próximos passos
 
-- [ ] Testar o fluxo de busca de elementos num ambiente pessoal (Personal
-      Area) primeiro
-- [ ] Documentar aqui os comandos que funcionaram bem, com exemplo real
-- [ ] Anotar limitações encontradas (o que o skill não consegue fazer ainda)
+- [x] Testar o fluxo de busca de elementos num ambiente pessoal (Personal
+      Area) primeiro — feito via app AiSandbox
+- [x] Documentar aqui os comandos que funcionaram bem, com exemplo real —
+      ver seção "POC testado: HelloAiBlock" acima
+- [x] Anotar limitações encontradas (o que o skill não consegue fazer ainda)
+      — ver "Limitações conhecidas"
+- [ ] Testar Placeholders (Slots) num Block
+- [ ] Testar o mesmo padrão em O11 Traditional/Reactive de verdade
