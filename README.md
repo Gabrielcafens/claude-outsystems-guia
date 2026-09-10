@@ -127,12 +127,58 @@ voltar pra uma versão anterior por lá, independente de como a edição foi
 feita.
 
 **Funciona em qualquer versão do OutSystems (O11, ODC)?**
-Não testado ainda — anotar aqui assim que confirmar em qual versão você
-está usando.
+O MCP oficial da OutSystems (o skill/protocolo usado acima) hoje só funciona
+com **ODC**. Pra **O11** (Traditional ou Reactive) não tem integração nativa
+via MCP ainda — ver alternativa na seção abaixo.
+
+## Alternativa pra O11: Block como ponte pra código gerado por IA
+
+Fonte: [*AI-Powered Frontend Development in OutSystems O11 and ODC*](https://antonio-carvalho.medium.com/ai-powered-frontend-development-in-outsystems-o11-and-odc-4d408fdb4ade),
+por António Carvalho (autor de vários artigos sobre frontend em OutSystems,
+publica também em ITNEXT e em [osfrontendtips.com](https://www.osfrontendtips.com/)).
+
+Como o MCP oficial só cobre ODC, e a maioria das apps críticas de clientes
+roda em O11, o autor descreve uma técnica pra usar IA (incluindo Claude Code)
+gerando frontend de qualquer jeito, mesmo sem MCP:
+
+- Usa o **Block** do OutSystems como uma "casca" fina — só a ponte — e todo
+  o comportamento real vive em **TypeScript/JavaScript/CSS externo**, gerado
+  ou editado por um agente de IA fora do Service Studio.
+- Analogia do **iceberg**: o Block visível no Service Studio é só a ponta;
+  a maior parte do valor é o código high-code que fica "abaixo da linha
+  d'água", versionado normalmente em Git (branches, PRs, code review).
+- Mecânica: o Block usa uma variável local `Instance` (tipo Object) pra
+  guardar estado entre os handlers de ciclo de vida — `OnReady` (cria a
+  instância), `OnParametersChanged` (repassa mudanças de Input Parameters),
+  `OnDestroy` (chama `destroy()` pra cleanup). O runtime ID do Container do
+  Block é o ponto de conexão com o DOM.
+- Um Script (JS/TS bundlado, um arquivo CSS + um arquivo JS pra toda a
+  biblioteca de componentes) é carregado a nível de **Layout**, disponível
+  pra aplicação inteira.
+- Funciona em **O11 Reactive** e **ODC** do mesmo jeito; em **O11
+  Traditional** precisa de ajuste (a inicialização vira uma Expression,
+  executada na renderização do Block), mas a arquitetura de fundo é a mesma.
+- Vantagem chave: o código por trás do Block pode **evoluir sem republicar
+  o Block** — só atualizar o JS/CSS externo e dar refresh no módulo de UI
+  top-level, desde que não quebre o contrato (Input Parameters/Events) do
+  Block.
+- Dá pra expor **Placeholders** (equivalente a Slots de Web Component) pra
+  colocar conteúdo nativo OutSystems dentro do componente, e disparar
+  **Events** do Block a partir do high-code — comunicação nos dois sentidos.
+- Produtividade citada pelo autor: ~80–90% do frontend dele hoje é escrito
+  por agentes de IA, sobrando tempo pra arquitetura e validação.
+
+Outros artigos do mesmo autor, relacionados:
+- [How do I use an AI-powered IDE in OutSystems](https://medium.com/itnext/how-do-i-use-an-ai-powered-ide-in-outsystems-00fce740a08b) (Cursor)
+- [How I develop CSS and JavaScript 2x faster in OutSystems](https://itnext.io/how-i-develop-css-and-javascript-2x-faster-in-outsystems-b8b9ebc8675d)
+- Web Component in Action, using OutSystems
+- Stop using Grid and Gutter: start using Flex in OutSystems
 
 ## Limitações conhecidas (preencher conforme for testando)
 
-- [ ] *(ainda não testado o suficiente pra listar limitações reais)*
+- [x] MCP oficial não funciona em O11 (Traditional/Reactive), só ODC — ver
+      alternativa de Block+high-code acima
+- [ ] *(demais limitações — ainda não testado o suficiente pra listar)*
 
 ## Próximos passos
 
