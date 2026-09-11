@@ -6,6 +6,10 @@ alternativa (Block como ponte pra código de IA) que funciona em qualquer
 versão da plataforma. Cada seção abaixo é um passo: leia, teste, marque
 como feito.
 
+> **Setup do zero?** Veja [PASSO-A-PASSO.md](PASSO-A-PASSO.md) — guia único
+> desde instalar/conectar o Claude Code até publicar o primeiro Block, com
+> todos os links e comandos exatos usados nesta pasta.
+
 ## Índice
 
 1. [O que é a integração oficial (MCP)](#1-o-que-é-a-integração-oficial-mcp)
@@ -15,6 +19,7 @@ como feito.
 5. [Limitação do MCP oficial: só funciona em ODC](#5-limitação-do-mcp-oficial-só-funciona-em-odc)
 6. [Estudo: a técnica do artigo do António Carvalho](#6-estudo-a-técnica-do-artigo-do-antónio-carvalho)
 7. [Passo a passo: replicando o POC (HelloAiBlock)](#7-passo-a-passo-replicando-o-poc-helloaiblock)
+   - [7.1 Extensão: reskin com classes shadcn/ui (em andamento)](#71-extensão-reskin-com-classes-shadcnui-em-andamento)
 8. [O que deu errado e como foi corrigido](#8-o-que-deu-errado-e-como-foi-corrigido)
 9. [Glossário](#9-glossário)
 10. [Perguntas frequentes](#10-perguntas-frequentes)
@@ -252,6 +257,27 @@ agente, o erro que apareceu e a correção aplicada) está em
 [poc-hello-ai-block-transcript.md](poc-hello-ai-block-transcript.md) — vale
 ler antes de repetir o teste, pra não cair nos mesmos obstáculos.
 
+### 7.1. Extensão: reskin com classes shadcn/ui (em andamento)
+
+Teste separado, mais simples que o Block+JS: em vez de reconstruir um
+componente do [shadcn/ui](https://ui.shadcn.com/) via script, a ideia é
+pegar só as **classes CSS/tokens de design** que ele usa (cores, raio de
+borda, sombra) e aplicar direto na propriedade **Style Classes** de um
+widget nativo do OutSystems (ex: Button) — sem precisar de Block nem
+JavaScript nenhum, só CSS carregado a nível de Layout.
+
+**Status:** em andamento. CSS `ShadcnTheme.css` com as variáveis de tema
+(preset "zinc") e a classe `.shadcn-btn` foi criado no módulo `AiSandbox`,
+mas a associação ao Layout e a criação do Button de teste ficaram
+pendentes por dois bloqueios sucessivos: estouro de cota do Mentor e,
+depois, manutenção programada do ambiente ODC. Retomar assim que o
+ambiente voltar — passo a passo completo em
+[PASSO-A-PASSO.md](PASSO-A-PASSO.md#extra-reskin-com-classes-shadcnui).
+
+**Nota técnica encontrada:** `transition: colors 0.15s ease` é sintaxe do
+Tailwind (compilada), não CSS válido puro — a propriedade certa é
+`transition: background-color 0.15s ease`.
+
 ## 8. O que deu errado e como foi corrigido
 
 Duas coisas não saíram certas na primeira tentativa — documentar isso é
@@ -354,6 +380,8 @@ ainda não foi validado por nós, só pelo autor original.
 - [ ] Testar edição de tela/entidade de verdade e publicação
 - [ ] Testar Placeholders (Slots) num Block
 - [ ] Testar o mesmo padrão em O11 Traditional/Reactive de verdade
+- [ ] Concluir o teste de reskin com classes shadcn/ui (seção 7.1) — associar
+      CSS ao Layout, criar o Button de teste, publicar, tirar print
 
 > O log do projeto os-prep (caso de teste real de edição/publicação via
 > MCP, revisões 8–21) foi movido pra fora deste README — ver
