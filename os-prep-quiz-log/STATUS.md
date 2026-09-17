@@ -88,7 +88,7 @@ Pontos do relatório dele: **0%** em Client e Server Actions, Eventos de Blocos,
 ### ⚠️ ESTADO ATUAL: ZERO perguntas ativas
 Isso é esperado, não um bug. As 123 antigas foram desativadas com a troca de taxonomia e o banco novo ainda não foi escrito. **Um simulado agora não inicia** (a proteção da rev 20 avisa em vez de quebrar).
 
-**Próximo trabalho: escrever o banco de perguntas.** Rota: endpoint REST `SeedPerguntas` que já existe (secret `***REMOVIDO***`) — **não consome cota do Mentor**, é só um POST. O que falta é o conteúdo: as perguntas em si, com 4 alternativas, a correta e a explicação. Peso: primeiro os quatro 0% (Client e Server Actions, Eventos de Blocos, Fluxos Lógicos, Usando Blocos), depois os 33% (Entidades e Entidades Estáticas, Validações de Formulários), por último Aggregates (66%).
+**Próximo trabalho: escrever o banco de perguntas.** Rota: endpoint REST `SeedPerguntas` que já existe (protegido por secret; o valor fica fora deste repositório) — **não consome cota do Mentor**, é só um POST. O que falta é o conteúdo: as perguntas em si, com 4 alternativas, a correta e a explicação. Peso: primeiro os quatro 0% (Client e Server Actions, Eventos de Blocos, Fluxos Lógicos, Usando Blocos), depois os 33% (Entidades e Entidades Estáticas, Validações de Formulários), por último Aggregates (66%).
 
 ### Ainda não testado
 Nenhuma das revisões 17–21 foi clicada. Todas passaram na validação do OutSystems com 0 erros, mas isso é análise estática. Falta rodar o fluxo real.
