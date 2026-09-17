@@ -1,0 +1,14 @@
+# Segredo nunca entra no repositório, nem por descuido
+.env
+.env.*
+*.secret
+*.secret.*
+secrets/
+segredos/
+credenciais*
+*.pem
+*.key
+*.p12
+
+# Notas locais que não são para publicar
+*.local.md

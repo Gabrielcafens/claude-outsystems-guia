@@ -1,0 +1,31 @@
+#!/bin/sh
+# Barra commit que pareça levar segredo (senha, token, chave).
+# Ative uma vez por clone:  git config core.hooksPath .githooks
+# Falso positivo:           git commit --no-verify
+
+PADROES='gh[pousr]_[A-Za-z0-9]{20,}'
+PADROES="$PADROES|AKIA[0-9A-Z]{16}"
+PADROES="$PADROES|-----BEGIN [A-Za-z ]*PRIVATE KEY-----"
+PADROES="$PADROES|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\."
+PADROES="$PADROES|[Bb]earer +[A-Za-z0-9._-]{20,}"
+PADROES="$PADROES|https?://[^/ :@]+:[^/ @]+@"
+# palavra-chave e, logo depois, um valor com número: pega tanto "chave: abc-1234" quanto "chave `abc-1234`".
+# O número é o que separa um valor de verdade de uma frase como "Senha = ConfirmarSenha".
+PALAVRAS='[Ss]ecret|SECRET|[Ss]enha|SENHA|[Pp]assword|PASSWORD|[Aa]pi[_-]?[Kk]ey|API_KEY|[Tt]oken|TOKEN'
+PADROES="$PADROES|($PALAVRAS)[A-Za-z_]*[ ]*[:=]?[ ]*[\"'\`]?[A-Za-z0-9_.~/+-]*[0-9][A-Za-z0-9_.~/+-]{3,}"
+
+# marcadores de exemplo, que não são segredo de verdade
+PLACEHOLDERS='\*\*\*|SEU_|seu_valor|<[^>]*>|xxxx|XXXX|0000000|1234567890'
+
+achados=$(git diff --cached --no-color -U0 --diff-filter=ACM -- . ':(exclude).githooks/pre-commit' \
+  | grep -E '^\+' | grep -vE '^\+\+\+' | grep -E "$PADROES" | grep -vE "$PLACEHOLDERS")
+
+if [ -n "$achados" ]; then
+  printf '\n  Commit barrado: as linhas abaixo parecem conter um segredo.\n\n'
+  printf '%s\n' "$achados" | head -20 | sed 's/^/    /'
+  printf '\n  Tire o valor do arquivo. Segredo vai para .env (ignorado pelo git) ou para o gerenciador de senhas.\n'
+  printf '  Se for falso positivo:  git commit --no-verify\n\n'
+  exit 1
+fi
+
+exit 0
