@@ -386,3 +386,23 @@ ainda não foi validado por nós, só pelo autor original.
 > O log do projeto os-prep (caso de teste real de edição/publicação via
 > MCP, revisões 8–21) foi movido pra fora deste README — ver
 > [`os-prep-quiz-log/`](os-prep-quiz-log/).
+
+## 13. Segredos e credenciais
+
+Senha, token e chave **não entram em arquivo versionado**, nem dentro de um `.md`. O
+lugar deles é um `.env` local (que o `.gitignore` já ignora) ou o gerenciador de
+senhas. No texto, cite só o nome: "protegido por secret", sem o valor.
+
+Este repositório é **público**: o que entra aqui, entra para sempre — mesmo apagando
+depois, o commit antigo continua acessível por um tempo.
+
+Existe um hook que barra o commit quando alguma linha parece um segredo. Ative uma
+vez, no seu clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Ele cobre token do GitHub, chave da AWS, chave privada, JWT, URL com senha e o padrão
+"palavra-chave seguida de um valor com número". Num falso positivo,
+`git commit --no-verify` passa por cima.
