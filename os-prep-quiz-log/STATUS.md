@@ -1,5 +1,7 @@
 # OS Prep Quiz — Status do Build (OutSystems ODC)
 
+> Cópia do status mantido fora do repositório, sincronizada em 21/09/2026. Valores de secret foram retirados; o resto está como no original.
+
 > Retomar amanhã: abrir Claude Code nesta mesma pasta/sessão e pedir para continuar. A retomada automática também está agendada para **29/08 ~21:02** (só funciona se esta sessão do Claude Code continuar aberta até lá — se fechar, é só colar este arquivo ou pedir "continua o OS Prep Quiz" que eu retomo do ponto exato).
 
 ## Objetivo
@@ -17,8 +19,19 @@ Plano completo salvo em: `C:\Users\gabriel.cafe\.claude\plans\gleaming-riding-sw
 - **Tenant:** `personal-zkgbsms6.outsystems.dev`
 - **Ambiente (Development):** `b2a33b20-dc33-4d31-9890-6b3aded35fac`
 - **URL runtime:** `https://personal-zkgbsms6-dev.outsystems.app/mecanicasteste`
-- **Mentor session_id:** nenhuma aberta — a última (`89c94845-e03b-4e2d-a258-d993826b6850`) foi encerrada em 01/09 ao concluir o build
-- **Revisão publicada mais recente:** **16** (01/09 — Flashcards, publish key `98a57d30-3ea6-4949-a75e-32b732f33f02`)
+- **Mentor session_id:** nenhuma aberta — a última (`bd3fb14a-b3d3-4931-9f7b-9ccb863820d1`) foi encerrada em 17/09 após publicar a revisão 26
+- **Revisão publicada mais recente:** **26** (17/09 — correção do `DesativarPerguntasLegado`, publish key `ab0f90dd-74b4-4d1d-9af9-0613111cba49`)
+- **URL runtime atual:** `https://personal-zkgbsms6-dev.outsystems.app/OSPrepQuiz` (a `/mecanicasteste` não existe mais)
+
+## ✅ 17/09: BANCO LIMPO — contaminação resolvida (revisão 26)
+
+- **Correção do endpoint:** o Mentor trocou o SQL do `DesativarPerguntasLegado` para `UPDATE {Pergunta} SET [Ativa] = 0 WHERE {Pergunta}.[Id] <= @EffectiveMaxId AND {Pergunta}.[Ativa] = 1`. 0 erros de validação (7 warnings de segurança pré-existentes). Publicado na **revisão 26**.
+- **Corte conferido antes de rodar:** as 123 legadas são exatamente os Ids **1–123** (todas CategoriaId 1–5, distribuição 46/20/18/22/17 = a antiga). As atuais vão do Id **133 ao 295** (não existem Ids 124–132). `EffectiveMaxId = If(MaxId = 0, 123, MaxId)`.
+- **Desativação executada uma vez** com `MaxId = 123` → `{"Success":true,"Desativadas":123,"Total":286,"Ativas":163,"Inativas":123}`. Recontagem confirmou `{"Total":286,"Ativas":163,"Inativas":123}`.
+- **Ativas por categoria agora:** 1 Client/Server Actions **15** · 2 Eventos de Blocos **10** · 3 Fluxos Lógicos **14** · 4 Usando Blocos **10** · 5 Entidades **13** · 6 Validações **25** · 7 Aggregates **17** · 8 Ciclo de Vida **5** · 9 Client Vars/Site Props **7** · 10 Relações **8** · 11 Roles **5** · 12 Telas/Widgets **16** · 13 Plataforma **9** · 14 Debugging **5** · 15 SQL **4**.
+- **Todas as categorias e "Todas as categorias" já podem ser usadas.** Os avisos abaixo sobre evitar as categorias 1–5 são históricos.
+- Das 286, as 163 ativas = 123 oficiais + 28 de reforço + 12 adicionadas entre 02/09 e 17/09 (não registadas aqui na época).
+- **Ainda pendente:** clicar o fluxo real (simulado de 50 questões e flashcards) — nada das revisões 17–26 foi testado pela UI.
 
 > **Nota de retomada (30/08):** o Mentor voltou a funcionar. Run `0c386cff-031e-4108-a9eb-07fb94035ab1` concluído com sucesso e **publicado na revisão 12** — itens 1–4 da lista "O que FALTA" estão prontos e no ar (DeviceId, ObterHistorico, telas Home e Historico), 0 erros de validação.
 
@@ -33,7 +46,7 @@ Plano completo salvo em: `C:\Users\gabriel.cafe\.claude\plans\gleaming-riding-sw
 - `TentativaResposta` (TentativaId, PerguntaId, OpcaoEscolhidaId nullable, Correta, TempoRespostaSegundos) — cascade delete de Tentativa
 
 ### Backend (REST API `QuizAdminAPI` + Server Actions)
-- `POST SeedPerguntas` (protegida por secret — valor guardado fora deste repo, não versionar) — usada para popular o banco
+- `POST SeedPerguntas` (protegida por secret; o valor fica fora deste repositório) — usada para popular o banco
 - `GET ContarPerguntas` — conta total de perguntas (bug de contagem já corrigido)
 - `GET ListarReferencia` — lista Ids/Labels de Categoria e ModoTentativa
 - `GET ListarPerguntasDebug` — lista todas as perguntas (debug, pode remover depois)
@@ -85,7 +98,84 @@ Pontos do relatório dele: **0%** em Client e Server Actions, Eventos de Blocos,
 ### As 7 categorias novas
 `ClientServerActions` · `EventosBlocos` · `FluxosLogicos` · `UsandoBlocos` · `Entidades` · `ValidacoesFormularios` · `Aggregates`
 
-### ⚠️ ESTADO ATUAL: ZERO perguntas ativas
+### ✅ Fase 3 (02/09): banco de perguntas oficial carregado
+
+**Revisão 22** — taxonomia ampliada de 7 para **15 categorias**. As 7 originais ficaram nas posições 1–7 (os ids são referenciados pelo seed); entraram Ciclo de Vida de Telas (8), Client Variables e Site Properties (9), Relações entre Dados (10), Segurança por Roles (11), Telas/Widgets/Botões (12), Plataforma/Módulos/Dependências (13), Debugging (14) e SQL e Consultas Avançadas (15).
+
+**Motivo da ampliação:** as 123 questões oficiais (Sample Questions - Associate Reactive Developer) cobrem muito mais que os 7 tópicos fracos do Gabriel — incluem Service Center, LifeTime, módulos, debugging, Site Properties, paginação e SQL Tool. Com só 7 categorias, um simulado de 50 questões não seria representativo do exame real.
+
+**123 questões oficiais traduzidas e carregadas** via `POST /rest/QuizAdminAPI/SeedPerguntas` (HTTP 200, retornou 123). Todas com 4 alternativas (ou 2, nas de verdadeiro/falso), exatamente uma correta, e explicação que ensina o conceito em vez de só confirmar a resposta.
+
+Distribuição das novas: Aggregates 17 · Telas/Widgets 16 · Entidades 13 · Validações 13 · Plataforma 9 · Fluxos Lógicos 8 · Relações 8 · Client Vars/Site Props 7 · Eventos de Blocos 5 · Usando Blocos 5 · Ciclo de Vida 5 · Roles 5 · Debugging 5 · SQL 4 · Client/Server Actions 3.
+
+**Questões reescritas:** as de números 87, 88, 89, 91, 95, 102, 103 e 120 do original referenciavam imagens (Aggregates, telas) que não vieram no texto. Foram reescritas descrevendo o cenário por extenso, preservando o conceito testado.
+
+**Erros encontrados no gabarito oficial:** a questão 119 tem duas alternativas marcadas "d" e o gabarito contradiz a questão 68 sobre o mesmo conceito (On Parameters Changed). Foi usada a resposta correta segundo o comportamento real da plataforma: o evento dispara quando o PAI altera os inputs. As questões 109 e 121 também têm letras duplicadas no original.
+
+### 🐛 CONFIRMADO EM 02/09: as perguntas antigas NÃO estavam desativadas
+
+Verificado por HTTP (`GET /rest/QuizAdminAPI/ContarPerguntas` → `{"Total":274,"Ativas":274}`). **Todas as 274 perguntas estavam ativas**, incluindo as 123 legadas. Um simulado teria misturado questões de Integration Studio e Lifecycle rotuladas com os nomes das categorias novas.
+
+**Causa raiz — lição importante para este projeto:** o Mentor edita o **modelo** da aplicação (o OML), não os **dados** do banco. Pedir a ele para pôr `Ativa = False` em linhas existentes nunca podia funcionar, porque isso é uma operação de runtime sobre registos, não uma alteração de modelo. O turno reportou sucesso com 0 erros porque, do ponto de vista dele, não havia nada de errado — simplesmente não havia nada a fazer no modelo.
+
+**Regra daqui para a frente:** mudanças em DADOS (registos de Pergunta, Opcao, Tentativa) passam por endpoints REST chamados em runtime. Mudanças em MODELO (entidades, telas, actions, static entities) passam pelo Mentor. Static entities são a exceção que confunde: os seus registos fazem parte do modelo, por isso o Mentor consegue alterá-los.
+
+**Correção tentada:** novo endpoint `POST /rest/QuizAdminAPI/DesativarPerguntasLegado` (revisão 25). ❌ **Devolve HTTP 500 — ainda NÃO funciona.**
+
+### 🔴 ESTADO REAL EM 02/09 23:25: banco ainda contaminado — ✅ RESOLVIDO EM 17/09 (ver topo)
+
+`GET /rest/QuizAdminAPI/ContarPerguntas` → `{"Total":274,"Ativas":274}`. **As 123 perguntas legadas continuam ativas.**
+
+**Bug do endpoint de desativação** (log OS-BERT-60407, verbatim): `column "runtime" of relation "Pergunta" does not exist, POSITION 57`. A query gerada foi:
+```sql
+UPDATE {Pergunta} SET {Pergunta}.[Ativa] = 0 WHERE {Pergunta}.[Id] <= @EffectiveMaxId AND {Pergunta}.[Ativa] = 1
+```
+O OutSystems expande `{Pergunta}` para a tabela física com o alias `runtime`, e o PostgreSQL **não aceita qualificar a coluna alvo de um SET**. A correção é tirar o prefixo da coluna do SET:
+```sql
+UPDATE {Pergunta} SET [Ativa] = 0 WHERE {Pergunta}.[Id] <= @EffectiveMaxId AND {Pergunta}.[Ativa] = 1
+```
+Não foi possível aplicar: a **cota do Mentor estourou** (`OS-AIWA-42903`, reset ~21h40min a partir de 02/09 23:20 → **03/09 por volta das 21:00**). Cron `e256314e` agendado para 03/09 21:06 com este diagnóstico.
+
+### ✅ O que ainda dá para estudar com o banco contaminado
+A contaminação está **só nas categorias 1 a 5** (as antigas tinham CategoriaId 1–5). **As categorias 6 a 15 estão 100% limpas.** Filtrando por elas, o simulado só sorteia perguntas corretas:
+
+| Categoria | Perguntas | Nota |
+|---|---|---|
+| 6 Validações de Formulários | **25** | ✅ limpa — **é um dos tópicos de 33%**, reforçada com +12 em 02/09 |
+| 7 Aggregates | 17 | ✅ limpa — tópico de 66% |
+| 8 Ciclo de Vida de Telas | 5 | ✅ limpa |
+| 9 Client Variables e Site Properties | 7 | ✅ limpa |
+| 10 Relações entre Dados | 8 | ✅ limpa |
+| 11 Segurança por Roles | 5 | ✅ limpa |
+| 12 Telas, Widgets e Botões | 16 | ✅ limpa |
+| 13 Plataforma, Módulos e Dependências | 9 | ✅ limpa |
+| 14 Debugging | 5 | ✅ limpa |
+| 15 SQL e Consultas Avançadas | 4 | ✅ limpa |
+
+⚠️ **Evitar as categorias 1–5 até a correção** — são justamente os quatro tópicos de 0% mais Entidades, que é o que ele mais precisa treinar. Azar do destino: a contaminação caiu exatamente nas categorias mais importantes.
+
+⚠️ **NÃO usar "Todas as categorias"** enquanto o banco não estiver limpo.
+
+### Histórico da suspeita (agora confirmada)
+
+### Histórico da suspeita (agora confirmada)
+O turno da revisão 21 deveria ter posto `Ativa = False` em todas elas, mas **isso não foi confirmado**. Elas mantiveram os CategoriaId 1–5 da taxonomia antiga, que agora apontam para categorias com nomes diferentes — ou seja, se estiverem ativas, aparecem perguntas de Integration Studio rotuladas como "Eventos de Blocos". Contagem por categoria hoje: ids 1–5 têm 49/25/26/27/30 (novas + antigas), ids 6–15 batem exatamente com as novas.
+
+**Como verificar:** abrir o app, entrar em Flashcards e escolher "Client e Server Actions" — se aparecerem **15 cartas**, a desativação funcionou; se aparecerem **61**, não funcionou e é preciso apagar as antigas.
+
+### Reforço nos tópicos críticos (02/09)
+Mais **28 questões escritas do zero** e carregadas (HTTP 200), focadas exclusivamente nos quatro tópicos de 0%, porque a amostra oficial os cobria mal — Client e Server Actions tinha apenas 3 questões:
+
+| Categoria | Oficiais | Reforço | Total ativo |
+|---|---|---|---|
+| Client e Server Actions | 3 | +12 | **15** |
+| Eventos de Blocos | 5 | +5 | **10** |
+| Fluxos Lógicos | 8 | +6 | **14** |
+| Usando Blocos | 5 | +5 | **10** |
+
+**Total de perguntas ativas: 151** (123 oficiais + 28 de reforço). No banco existem 274 registos, incluindo as 123 antigas desativadas.
+
+### Histórico: o estado anterior era ZERO perguntas ativas
 Isso é esperado, não um bug. As 123 antigas foram desativadas com a troca de taxonomia e o banco novo ainda não foi escrito. **Um simulado agora não inicia** (a proteção da rev 20 avisa em vez de quebrar).
 
 **Próximo trabalho: escrever o banco de perguntas.** Rota: endpoint REST `SeedPerguntas` que já existe (protegido por secret; o valor fica fora deste repositório) — **não consome cota do Mentor**, é só um POST. O que falta é o conteúdo: as perguntas em si, com 4 alternativas, a correta e a explicação. Peso: primeiro os quatro 0% (Client e Server Actions, Eventos de Blocos, Fluxos Lógicos, Usando Blocos), depois os 33% (Entidades e Entidades Estáticas, Validações de Formulários), por último Aggregates (66%).
