@@ -19,12 +19,13 @@ como feito.
 5. [Limitação do MCP oficial: só funciona em ODC](#5-limitação-do-mcp-oficial-só-funciona-em-odc)
 6. [Estudo: a técnica do artigo do António Carvalho](#6-estudo-a-técnica-do-artigo-do-antónio-carvalho)
 7. [Passo a passo: replicando o POC (HelloAiBlock)](#7-passo-a-passo-replicando-o-poc-helloaiblock)
-   - [7.1 Extensão: reskin com classes shadcn/ui (em andamento)](#71-extensão-reskin-com-classes-shadcnui-em-andamento)
+   - [7.1 Extensão: reskin com classes shadcn/ui](#71-extensão-reskin-com-classes-shadcnui)
 8. [O que deu errado e como foi corrigido](#8-o-que-deu-errado-e-como-foi-corrigido)
 9. [Glossário](#9-glossário)
 10. [Perguntas frequentes](#10-perguntas-frequentes)
 11. [Limitações conhecidas](#11-limitações-conhecidas)
 12. [Próximos passos](#12-próximos-passos)
+13. [Segredos e credenciais](#13-segredos-e-credenciais)
 
 ---
 
@@ -130,13 +131,15 @@ Se o ambiente que você for testar for o **tenant da empresa** (não uma
 Personal Area pessoal), trate esse conteúdo como você trataria qualquer
 código de cliente/empregador:
 
-- Não publique nada daqui em repositório público
+- Não publique nada de lá em repositório público
 - Não compartilhe capturas de tela de apps internas fora do ambiente de
   trabalho
 - Se tiver dúvida se algo pode ser testado/documentado, pergunta antes
 
-Este repositório é privado justamente por causa disso — é espaço de estudo,
-não de divulgação.
+**Este repositório é público.** Por isso tudo o que está aqui veio de um
+tenant pessoal de ODC (apps de sandbox e de estudo), nunca de um ambiente
+de trabalho. Pelo mesmo motivo, senha e token não entram em nenhum arquivo —
+ver a [seção 13](#13-segredos-e-credenciais).
 
 ## 5. Limitação do MCP oficial: só funciona em ODC
 
@@ -257,26 +260,44 @@ agente, o erro que apareceu e a correção aplicada) está em
 [poc-hello-ai-block-transcript.md](poc-hello-ai-block-transcript.md) — vale
 ler antes de repetir o teste, pra não cair nos mesmos obstáculos.
 
-### 7.1. Extensão: reskin com classes shadcn/ui (em andamento)
+### 7.1. Extensão: reskin com classes shadcn/ui
 
 Teste separado, mais simples que o Block+JS: em vez de reconstruir um
 componente do [shadcn/ui](https://ui.shadcn.com/) via script, a ideia é
 pegar só as **classes CSS/tokens de design** que ele usa (cores, raio de
 borda, sombra) e aplicar direto na propriedade **Style Classes** de um
-widget nativo do OutSystems (ex: Button) — sem precisar de Block nem
-JavaScript nenhum, só CSS carregado a nível de Layout.
+widget nativo do OutSystems (ex: Button) — sem Block nem JavaScript, só CSS
+na folha de estilo do tema.
 
-**Status:** em andamento. CSS `ShadcnTheme.css` com as variáveis de tema
-(preset "zinc") e a classe `.shadcn-btn` foi criado no módulo `AiSandbox`,
-mas a associação ao Layout e a criação do Button de teste ficaram
-pendentes por dois bloqueios sucessivos: estouro de cota do Mentor e,
-depois, manutenção programada do ambiente ODC. Retomar assim que o
-ambiente voltar — passo a passo completo em
-[PASSO-A-PASSO.md](PASSO-A-PASSO.md#extra-reskin-com-classes-shadcnui).
+**Status: concluído** no app `AiSandbox` (tema `Template_WebApp`).
+
+> **Correção:** uma versão anterior deste README dizia que um arquivo
+> `ShadcnTheme.css` tinha sido criado. Ele nunca existiu — o CSS foi direto
+> para a folha de estilo do tema.
+
+| Revisão | O que aconteceu |
+|---|---|
+| 7 | O Mentor escreveu o CSS **de memória**, no formato antigo do shadcn (preset "zinc", cores em HSL) |
+| 8 | Trocado pelos valores convertidos do código-fonte oficial (`button.tsx`, tema "neutral", cores em `oklch`) |
+| 9 | O visual de todos os componentes que só precisam de CSS, e o reskin global dos widgets do OutSystems UI |
+
+O que o teste mostrou:
+
+- **O compactador do ODC aceita CSS moderno.** O CSS publicado foi baixado e
+  comparado regra a regra com o original: `oklch()`, `color-mix()`, `:has()`
+  e `:is()` passaram intactos. As diferenças são só de compactação
+  (`0.625rem` → `.625rem`, `::before` → `:before`).
+- **Troque a classe, não some.** Com `btn shadcn-btn` o shadcn ainda ganha no
+  visual padrão, mas as regras do `.btn` voltam no hover, no foco e no
+  estado desabilitado.
+- **CSS grande vai à mão.** ~100 KB mandados pelo Mentor derrubaram o turno;
+  colar no ODC Studio é instantâneo e não gasta cota.
+
+Passo a passo, com o CSS do Button: [PASSO-A-PASSO.md, seção 6](PASSO-A-PASSO.md#6-extra-reskin-com-classes-shadcnui).
 
 **Nota técnica encontrada:** `transition: colors 0.15s ease` é sintaxe do
-Tailwind (compilada), não CSS válido puro — a propriedade certa é
-`transition: background-color 0.15s ease`.
+Tailwind (compilada), não CSS válido puro — em CSS a propriedade é
+`transition-property`, com as propriedades reais ou `all`.
 
 ## 8. O que deu errado e como foi corrigido
 
@@ -376,15 +397,15 @@ ainda não foi validado por nós, só pelo autor original.
       Area) — feito via app AiSandbox
 - [x] Documentar os comandos que funcionaram, com exemplo real (seção 7)
 - [x] Anotar limitações encontradas (seção 11)
+- [x] Testar edição de tela/entidade de verdade e publicação — feito no
+      OS Prep Quiz (revisões 8 a 26) e no AiSandbox
+- [x] Concluir o teste de reskin com classes shadcn/ui (seção 7.1)
 - [ ] Testar em tenant O11 pra comparar comportamento
-- [ ] Testar edição de tela/entidade de verdade e publicação
 - [ ] Testar Placeholders (Slots) num Block
 - [ ] Testar o mesmo padrão em O11 Traditional/Reactive de verdade
-- [ ] Concluir o teste de reskin com classes shadcn/ui (seção 7.1) — associar
-      CSS ao Layout, criar o Button de teste, publicar, tirar print
 
 > O log do projeto os-prep (caso de teste real de edição/publicação via
-> MCP, revisões 8–21) foi movido pra fora deste README — ver
+> MCP, revisões 8–26) foi movido pra fora deste README — ver
 > [`os-prep-quiz-log/`](os-prep-quiz-log/).
 
 ## 13. Segredos e credenciais

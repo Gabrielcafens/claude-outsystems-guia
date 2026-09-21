@@ -5,9 +5,11 @@ Log da sessão de teste da técnica descrita em
 (António Carvalho), aplicada num app ODC de sandbox via Claude Code + skill
 `outsystems`. Documentado em 2026-09-10.
 
-Setup: dois terminais Claude Code em paralelo — este aqui (Mentor, orientando)
-e outro conectado ao tenant ODC (executando via subagente em background, com
-a skill `outsystems`).
+Setup: dois terminais Claude Code em paralelo — um consultivo, que escrevia
+os prompts e revisava os resultados, e outro conectado ao tenant ODC
+(executando via subagente em background, com a skill `outsystems`). Neste
+documento, **Mentor** é sempre a IA do próprio OutSystems, que o terminal
+conectado aciona para editar o app.
 
 ---
 
@@ -60,9 +62,9 @@ via innerHTML, onParametersChanged, destroy) e associa esse Resource à
 tela/layout onde o HelloAiBlock é usado.
 ```
 
-Versão TypeScript original enviada como referência (o autor da doc — Claude
-"Mentor" — escreveu com tipos; o agente do ODC teve que transpilar pra JS
-puro porque o Resource não aceita `interface`/`private`/anotações de tipo):
+Versão TypeScript original enviada como referência (o terminal consultivo
+escreveu com tipos; o agente do ODC teve que transpilar pra JS puro porque o
+Resource não aceita `interface`/`private`/anotações de tipo):
 
 ```ts
 interface IHelloAiBlockConfig {
@@ -227,6 +229,20 @@ class HelloAiBlock {
 (window as any).AiSandbox = (window as any).AiSandbox || {};
 (window as any).AiSandbox.HelloAiBlock = HelloAiBlock;
 ```
+
+> **Duas notas de revisão, escritas depois** (o resto deste documento é o
+> registro do que foi dito na hora):
+>
+> - **O script publicado não usa `function` e `self`.** Baixando o arquivo
+>   que o app carrega, ele continua com `class` e template strings — a
+>   justificativa de compatibilidade acima não se confirmou, e arrow
+>   functions e `?.` funcionariam igual.
+> - **Não copie este `render()` para um app de verdade.** O `innerHTML` com
+>   `${this.nome}` executa HTML: se o nome vier de um usuário ou do banco, um
+>   valor como `<img src=x onerror=...>` roda JavaScript (XSS). Monte o HTML
+>   fixo uma vez e coloque o dado com `textContent`. Os JS nodes de
+>   `OnParametersChanged` e `OnDestroy` também deveriam checar
+>   `if ($parameters.Instance)` antes de chamar a instância.
 
 **Resultado final:**
 

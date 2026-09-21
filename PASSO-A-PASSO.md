@@ -162,67 +162,86 @@ Objetivo: aplicar o **visual** do [shadcn/ui](https://ui.shadcn.com/)
 — sem Block, sem JavaScript, só CSS. Mais simples que a seção 5 porque não
 tem comportamento pra replicar, só aparência.
 
-**6.1 — Criar o CSS de tema, a nível de Layout**
+> **Não peça o CSS de memória.** Na primeira tentativa, o Mentor escreveu um
+> CSS no formato antigo do shadcn (preset "zinc", cores em HSL). O shadcn
+> atual usa Tailwind v4 e cores em `oklch`, e os valores são outros. Os
+> valores abaixo foram convertidos do código-fonte oficial
+> (`registry/new-york-v4/ui/button.tsx`, tema "neutral").
 
-```
-Cria um CSS Resource a nível de Layout com as variáveis de tema do
-shadcn/ui (preset "zinc", modo claro) e uma classe utilitária pro
-componente que você quer estilizar, ex. .shadcn-btn pro botão:
+**6.1 — Colar o CSS na folha de estilo do tema**
 
+No ODC Studio: app → **Interface → Themes →** o tema do app → folha de
+estilo. Cole isto e publique:
+
+```css
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  --primary: 240 5.9% 10%;
-  --primary-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --ring: 240 5.9% 10%;
-  --radius: 0.5rem;
+  --shadcn-radius: 0.625rem;
+  --shadcn-radius-md: calc(var(--shadcn-radius) * 0.8);
+  --shadcn-primary: oklch(0.205 0 0);
+  --shadcn-primary-foreground: oklch(0.985 0 0);
+  --shadcn-ring: oklch(0.708 0 0);
+  --shadcn-focus-ring: 0 0 0 3px color-mix(in oklab, var(--shadcn-ring) 50%, transparent);
 }
 
 .shadcn-btn {
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+  font-family: inherit;
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  white-space: nowrap;
-  border-radius: calc(var(--radius) - 2px);
-  font-size: 0.875rem;
-  font-weight: 500;
   height: 2.25rem;
   padding: 0.5rem 1rem;
-  background-color: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
+  border-radius: var(--shadcn-radius-md);
+  font-size: 0.875rem;
+  line-height: calc(1.25 / 0.875);
+  font-weight: 500;
+  white-space: nowrap;
+  background-color: var(--shadcn-primary);
+  color: var(--shadcn-primary-foreground);
+  outline-style: none;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-.shadcn-btn:hover { background-color: hsl(var(--primary) / 0.9); }
-.shadcn-btn:focus-visible { outline: none; box-shadow: 0 0 0 1px hsl(var(--ring)); }
+/* o OutSystems UI pinta e sublinha links no hover; aqui a cor volta */
+.shadcn-btn:is(:hover, :focus, :visited, :active) {
+  color: var(--shadcn-primary-foreground);
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .shadcn-btn:hover { background-color: color-mix(in oklab, var(--shadcn-primary) 90%, transparent); }
+}
+.shadcn-btn:focus-visible { box-shadow: var(--shadcn-focus-ring); }
 .shadcn-btn:disabled { pointer-events: none; opacity: 0.5; }
 ```
 
+Isso é só a variante padrão do Button. Tudo foi testado no ODC: o
+compactador do tema mantém `oklch()`, `color-mix()` e `:is()`.
+
 > **Atenção:** `transition: colors 0.15s ease` é sintaxe do Tailwind
-> compilado, **não é CSS válido** — a propriedade real que anima é
-> `transition: background-color 0.15s ease` (ou a propriedade específica
-> que você quer transicionar).
+> compilado, **não é CSS válido**. Em CSS puro é `transition-property` com
+> as propriedades reais, ou `all`.
 
 **6.2 — Aplicar no widget nativo**
 
-```
-Adiciona um widget Button nativo do OutSystems numa tela, e na propriedade
-"Style Classes" (ou "Extended Class") dele, coloca: shadcn-btn
-```
+No Button, na propriedade **Style Classes**, **troque** `btn` por
+`shadcn-btn`. Com as duas classes o shadcn ainda ganha no visual padrão,
+mas as regras do `.btn` voltam no hover, no foco e no estado desabilitado.
 
-Publique e compare visualmente com a [documentação do shadcn/ui](https://ui.shadcn.com/docs/components/button).
+Publique e compare com a [documentação do shadcn/ui](https://ui.shadcn.com/docs/components/button).
 
 **Por que isso funciona sem Block/JS:** o widget Button do OutSystems já
 renderiza como uma tag `<button>` de verdade — só precisava das classes
 CSS certas por cima. Pra componentes mais simples (Badge, Card, Alert)
 o mesmo raciocínio se aplica. Pra componentes com **comportamento**
 próprio do Radix UI (Dialog, Select, Combobox), essa técnica sozinha não
-basta — aí entra a técnica da seção 5, ou bundlar React de verdade dentro
-do script.
+basta — aí entra a técnica da seção 5.
+
+**Arquivo grande vai à mão.** Um CSS de ~100 KB mandado pelo Mentor
+derrubou o turno. Colar direto no ODC Studio é instantâneo e não gasta
+cota.
 
 ## 7. Links de referência, todos juntos
 
