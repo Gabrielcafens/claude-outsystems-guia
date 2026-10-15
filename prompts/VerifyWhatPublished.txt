@@ -1,0 +1,52 @@
+WHEN TO USE
+After any publish you did not watch byte for byte, especially one made through
+an agent.
+
+"Published with 0 errors" is static analysis of the model. It does not mean the
+component renders, the JSON parses, or the events fire. A far-too-simple
+implementation publishes perfectly cleanly.
+
+-------------------------------------------------------------------------------
+
+Verify what is actually published for <app>. Do not trust the publish report.
+
+1. Fetch https://<app-url>/moduleservices/moduleinfo and list the versioned
+   files the app loads.
+2. Download <the theme CSS / the Script / the bundle> and compare it against
+   <local path>.
+3. Normalise the platform's own rewrites before reporting any difference:
+   - theme CSS is minified: 0.625rem becomes .625rem, ::before becomes
+     :before, colours become hex, identical rules get merged
+   - Scripts are not minified but are reindented, CRLF becomes LF, and a BOM
+     is added
+4. Report only the differences that survive that normalisation, and for each
+   one say whether it is the platform rewriting or our file being out of date.
+
+Then list any value that has to match data - configuration JSON, keys, ids -
+and read it from the published file rather than from any earlier report.
+
+-------------------------------------------------------------------------------
+
+NOTES
+
+Two things this has caught:
+
+A bundle one revision behind. After an environment was restored from an export,
+a hand-pasted JavaScript file came back as the OLDER version - silently,
+because the app published with 0 errors either way. A 75 KB stylesheet pasted
+the same way survived intact. Only a file comparison told the two apart.
+
+A rewritten configuration JSON. An agent asked to copy a value literally
+returned it with labels changed and keys translated. Still valid JSON, so
+nothing failed - some badge colours just stopped matching their data. The
+turn's own report said it had been copied.
+
+What this cannot tell you:
+
+A Block that no screen uses is not in the bundle. If you are auditing generated
+JS nodes, build a throwaway screen that uses the Block first, or there is
+nothing to find.
+
+File identity is not behaviour. Finish in the browser: Elements shows whether
+the component took over its container, Console shows what it complained about.
+That is the step people skip.
