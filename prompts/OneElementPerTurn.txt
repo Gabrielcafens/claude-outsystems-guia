@@ -1,0 +1,57 @@
+WHEN TO USE
+Paste this into the session connected to the OutSystems environment, one copy
+per element, when Claude is driving Mentor through the MCP server.
+
+Mentor builds a narrow request exactly and guesses at a broad one. The quota it
+spends is the environment's, counted per tenant and per organisation - on a
+shared environment you are spending a team resource.
+
+-------------------------------------------------------------------------------
+
+Create exactly one element in <app / module>, and nothing else.
+
+Element: <type - Block, Client Action, Screen, Entity, Structure>
+Name: <name>
+<Input Parameters / Attributes / Events, each with its type and default>
+
+Do not create anything that is not listed above. Do not publish.
+
+When you are done, report back:
+- the element you created and every parameter, with its type
+- anything you changed, renamed or added that I did not ask for
+- what you would need next
+
+I will review and tell you whether to publish.
+
+-------------------------------------------------------------------------------
+
+NOTES
+
+Why one at a time: a Script and a Block sent in the same turn exhausted the
+daily quota with OS-AISA-42903 and published nothing at all, neither of them.
+Split into two turns, both passed. Three quota exhaustions in three days, every
+one on a turn that asked for several things at once; none on a turn that asked
+for one.
+
+Why "nothing that is not listed above": helpfulness is the failure mode. Ask
+for a Block and Mentor will often add the screen that uses it, wire the two
+together, and mention it in passing. Now two things changed in a turn you
+wanted to be able to undo, and the report reads as success.
+
+Why "do not publish": publishing is the irreversible part of the loop.
+Everything before it can be thrown away.
+
+Why the report: Mentor builds STRUCTURE exactly - Blocks, parameters, events,
+handlers, screens all came back as specified. It rewrites CONTENT. Two measured
+cases, both after an explicit instruction to copy literally: an escape sequence
+inside a CSS comment changed character, and a column-configuration JSON came
+back with labels changed, columns reordered and keys translated. The JSON was
+still valid, so nothing failed loudly - the badge colours just silently stopped
+matching the data.
+
+So: model through Mentor, payload by hand. Anything over about 100 KB does not
+merely change, it fails: a 106 KB stylesheet killed a turn with OS-AIWA-50001.
+Pasting the same file into ODC Studio is instant and costs no quota.
+
+If the turn fails, resume that session - do not start a new one. See the
+OutSystems Mentor instruction for the rest.
