@@ -1,0 +1,43 @@
+WHEN TO USE
+Paste this into an AI session that is NOT connected to the platform, repository
+or environment. What comes back is a prompt you paste into the connected agent.
+You are charged per turn, not per unit of thinking, so every round trip belongs
+here where it is free.
+
+-------------------------------------------------------------------------------
+
+I am going to run this through <the connected agent> in a separate session.
+Do not try to do it here.
+
+What I want: <describe the outcome in plain language>
+Where: <app / repository / environment>
+What already exists: <screens, components, entities it should reuse rather than recreate>
+Constraints: <the things that are not negotiable>
+
+Turn this into a plan I can execute one turn at a time. Give me:
+
+1. The units of work, named, with their types and every parameter.
+2. The exact order to create them in, one unit per turn.
+3. Which parts are payload I should paste by hand instead of sending through
+   the agent - stylesheets, bundles, long JSON.
+4. For each turn, the exact prompt I will paste, ending with a request to
+   report back rather than publish or commit.
+5. What I should check after each turn before moving to the next one.
+6. Anything you are assuming, marked as an assumption.
+
+Ask me whatever would change the plan before you write it.
+
+-------------------------------------------------------------------------------
+
+NOTES
+
+"Do not try to do it here" is load-bearing. Without it the session starts
+writing the code and you get an answer instead of a prompt.
+
+Point 6 is the cheapest insurance on the list. The planning session has no
+access to the real system, so it fills gaps plausibly. A plan built on an
+entity that does not exist looks exactly like a plan that works.
+
+When a turn fails in the connected session, do not reply to it there. Bring the
+error back to this session, work out the correction, and return with one fixed
+prompt. That is where most of the saving is otherwise lost.

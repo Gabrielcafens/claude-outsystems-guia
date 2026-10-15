@@ -1,7 +1,7 @@
 # Claude + OutSystems
 
 Guia de estudo e teste prático de como integrar o Claude Code ao OutSystems
-— tanto pelo caminho oficial (MCP, só em ODC) quanto por uma técnica
+— tanto pelo caminho oficial (MCP, hoje com um servidor para ODC e outro para O11) quanto por uma técnica
 alternativa (Block como ponte pra código de IA) que funciona em qualquer
 versão da plataforma. Cada seção abaixo é um passo: leia, teste, marque
 como feito.
@@ -10,13 +10,42 @@ como feito.
 > desde instalar/conectar o Claude Code até publicar o primeiro Block, com
 > todos os links e comandos exatos usados nesta pasta.
 
+## Material pronto pra usar
+
+Além do guia, três pastas com material que dá pra levar direto pro seu projeto.
+Tudo saiu de ambiente pessoal, em app descartável, sem código nem dado de
+cliente. Onde algo não foi verificado de ponta a ponta, o arquivo diz isso.
+
+**[skills/](skills/)** — skills do Claude Code. O Claude abre cada uma sozinho
+quando o pedido bate com a descrição dela. Pra instalar, crie uma pasta com o
+nome da skill dentro de `~/.claude/skills/` (`%USERPROFILE%\.claude\skills\` no
+Windows) e salve o arquivo lá dentro como `SKILL.md`.
+
+| Skill | Pra quê |
+|---|---|
+| [outsystems-ui-css](skills/outsystems-ui-css.md) | mudar a aparência de widget nativo só com CSS — e quando *não* montar componente |
+| [outsystems-block-component](skills/outsystems-block-component.md) | componente em TypeScript dirigido por um Block, a técnica da seção 6 |
+| [outsystems-html-email](skills/outsystems-html-email.md) | e-mail em HTML saindo de um app OutSystems |
+| [outsystems-agent-session](skills/outsystems-agent-session.md) | dirigir um ambiente por um agente sem queimar cota |
+
+**[instructions/](instructions/)** — regra permanente, que vale em todo turno
+sem ninguém pedir. [`outsystems-frontend.CLAUDE.md`](instructions/outsystems-frontend.CLAUDE.md)
+vai na raiz do repositório e o agente lê sozinho;
+[`prompt-handoff.md`](instructions/prompt-handoff.md) é a prática de planejar
+numa sessão gratuita e executar na paga;
+[`outsystems-mentor.md`](instructions/outsystems-mentor.md) é o manual de
+operação do Mentor.
+
+**[prompts/](prompts/)** — seis prompts que a gente usou de verdade, cada um
+com quando usar, o texto pra copiar e as notas do que deu errado antes.
+
 ## Índice
 
 1. [O que é a integração oficial (MCP)](#1-o-que-é-a-integração-oficial-mcp)
 2. [Pré-requisitos](#2-pré-requisitos)
 3. [Passo a passo: usando o MCP oficial](#3-passo-a-passo-usando-o-mcp-oficial)
 4. [Cuidado com código de trabalho](#4-cuidado-com-código-de-trabalho)
-5. [Limitação do MCP oficial: só funciona em ODC](#5-limitação-do-mcp-oficial-só-funciona-em-odc)
+5. [O MCP em O11: existe, e é outra coisa](#5-o-mcp-em-o11-existe-e-é-outra-coisa)
 6. [Estudo: a técnica do artigo do António Carvalho](#6-estudo-a-técnica-do-artigo-do-antónio-carvalho)
 7. [Passo a passo: replicando o POC (HelloAiBlock)](#7-passo-a-passo-replicando-o-poc-helloaiblock)
    - [7.1 Extensão: reskin com classes shadcn/ui](#71-extensão-reskin-com-classes-shadcnui)
@@ -141,11 +170,39 @@ tenant pessoal de ODC (apps de sandbox e de estudo), nunca de um ambiente
 de trabalho. Pelo mesmo motivo, senha e token não entram em nenhum arquivo —
 ver a [seção 13](#13-segredos-e-credenciais).
 
-## 5. Limitação do MCP oficial: só funciona em ODC
+## 5. O MCP em O11: existe, e é outra coisa
 
-O MCP oficial da OutSystems hoje só funciona com **ODC**. Pra **O11**
-(Traditional ou Reactive) não existe integração nativa via MCP ainda — e é
-justamente aí que entra o material das seções seguintes.
+O MCP oficial começou só em **ODC**, e por um tempo essa foi a limitação. Hoje
+existem **dois servidores**, e eles não se parecem em quase nada:
+
+| | ODC | O11 |
+|---|---|---|
+| Onde roda | hospedado, um por tenant | **local, dentro do Service Studio** (11.55.91+) |
+| Endereço | o `/mcp` do tenant | `http://127.0.0.1:<porta dinâmica>/mcp` |
+| Autenticação | OAuth no tenant | **nenhuma** — escuta só em loopback |
+| Escopo | os apps do tenant | **o módulo que está aberto** no Service Studio |
+| Como edita | o agente do ODC (Mentor) edita o modelo no servidor | escreve **C# contra a Model API**, rodando sobre uma **cópia** do módulo |
+| Onde se revisa | no modelo, publicado ou não | **Compare and Merge**, antes de valer |
+
+Registro do servidor de O11, com a porta que o Service Studio mostrar:
+
+```bash
+claude mcp add --transport http servicestudio http://127.0.0.1:<PORTA>/mcp
+```
+
+Duas consequências que passam despercebidas. A porta é dinâmica e o servidor
+**não tem autenticação** — é loopback, mas qualquer coisa já rodando na máquina
+alcança, então trate como ferramenta de desenvolvimento local e não deixe
+registrado em máquina compartilhada. Em compensação, o passo de revisão no
+Compare and Merge é uma rede de proteção que o caminho do ODC não tem: você vê
+o diff antes de qualquer coisa valer.
+
+Repositório: [OutSystems/outsystems11-mcp](https://github.com/OutSystems/outsystems11-mcp).
+
+**Aviso honesto:** o servidor de O11 aqui é leitura da documentação oficial,
+não medição nossa — não chegamos a rodá-lo. Tudo o que este repositório mede
+foi medido contra o de ODC. A técnica de Block + high-code das seções seguintes
+continua valendo de qualquer forma, porque não depende de MCP nenhum.
 
 ---
 

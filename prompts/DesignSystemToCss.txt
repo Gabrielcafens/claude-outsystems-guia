@@ -1,0 +1,46 @@
+WHEN TO USE
+Turning a component library into a stylesheet for a platform theme, where you
+cannot ship the library's own build - OutSystems themes, or anything similar.
+
+-------------------------------------------------------------------------------
+
+Convert these components to plain CSS for a <platform> theme.
+
+Source: <repository and path>, at commit <hash>
+Components: <list>
+
+Rules:
+- Work from the source files above. Do not write these from memory - this
+  library changes often and I need the version I am on, not the version you
+  remember.
+- Output plain CSS. Utility-class shorthand is not CSS: "transition: colors
+  0.15s ease" is invalid and gets dropped silently. Use real property names.
+- Prefix every class with <prefix>- and every custom property with --<prefix>-.
+- Do not set font-family inside a component class. The font belongs to the
+  theme.
+- Tell me which declarations you could not express, instead of approximating
+  them.
+
+Record the commit hash in a comment at the top of the file.
+
+-------------------------------------------------------------------------------
+
+NOTES
+
+Why the pinned commit: the first attempt without one produced perfectly
+plausible and perfectly outdated CSS - the old format of the library, the wrong
+default preset, and colours in a colour space it had already moved away from.
+Every value was wrong and nothing errored. This generalises past any one
+library: for a fast-moving design system the agent has to read the version you
+are on, not recall the version it was trained on. The pinned hash also tells
+the next person which version the stylesheet reflects.
+
+Why the utility-shorthand rule: "transition: colors 0.15s ease" appears
+throughout snippets derived from utility frameworks. "colors" is not a
+property. The declaration is dropped, the transition never happens, and nothing
+reports it.
+
+After the conversion, split the output in two before shipping: the classes you
+apply deliberately, which change nothing until someone uses them, and any
+overrides targeting the platform's own selectors, which change every instance
+in the app at once and need a look at real screens first.
