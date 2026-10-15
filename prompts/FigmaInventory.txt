@@ -1,0 +1,51 @@
+WHEN TO USE
+Step one of two, for adding a screen to an application that already exists -
+which is most of them. Ask for the screen first and you get something that
+looks like the design and shares nothing with the app it is joining: new
+components beside existing ones, hex values beside tokens, a second way to do
+what the app already does.
+
+The inventory is cheap to read and correct. The code is not.
+
+-------------------------------------------------------------------------------
+
+Here is a Figma frame: <url>
+Here is the codebase: <path or repository>
+
+Do not write any code yet. I want an inventory first.
+
+From the Figma node, list:
+- every value that already maps to a design token, with the token name
+- every value that is hard-coded, with what it would need to become a token
+- any value that cannot be expressed in our system, and why
+
+From the codebase, list:
+- the existing components this screen could reuse as-is
+- the ones that would need a variant, and what the variant changes
+- anything this design implies we do not have at all
+
+End with the open questions a designer has to answer before anyone writes code.
+
+-------------------------------------------------------------------------------
+
+NOTES
+
+What this catches:
+
+Values with no token. Figma hands you hex and pixels; the theme has a name for
+most of it, and using the name is what makes the screen survive a rebrand.
+
+Values the system cannot express. Real example: a platform whose font-weight
+scale is 300, 400, 600, 700 - with no 500. A design asking for 500 is either a
+hard-coded number or a decision to add the token. Both are fine; choosing by
+accident is not.
+
+Export noise. Things like "font-feature-settings: 'liga' off" come straight out
+of Figma and should never reach your CSS, along with font-family inside a
+component class.
+
+What the app already has. This is the one that pays for the whole exercise. An
+agent that has not been asked to look will build what it needs rather than
+reuse what exists.
+
+Step two is FigmaImplement.txt, after the inventory has been agreed.

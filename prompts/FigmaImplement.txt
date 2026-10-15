@@ -1,0 +1,27 @@
+WHEN TO USE
+Step two of two, in the same session that produced the inventory with
+FigmaInventory.txt, and only after a designer has answered the open questions
+it raised.
+
+-------------------------------------------------------------------------------
+
+Using the inventory above, implement <screen name>.
+
+Reuse the components listed as reusable, unchanged. For the ones needing a
+variant, add the variant beside the original - do not edit the original.
+Use token names, not the raw hex and pixel values from Figma.
+
+For anything on the open-questions list that is still unanswered, stop and ask
+rather than choosing for me.
+
+-------------------------------------------------------------------------------
+
+NOTES
+
+Why "do not edit the original": a variant beside the original is additive and
+reviewable. An edited original changes every screen already using it, usually
+without anyone noticing until someone else's page looks wrong.
+
+Why "stop and ask": an unanswered design question does not disappear when an
+agent picks one of the options. It becomes a decision nobody made, buried in
+code, that someone has to reverse-engineer later.

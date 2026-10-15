@@ -37,8 +37,13 @@ Duas opções, na ordem de preferência pra estudo/teste pessoal:
   É onde o MCP oficial funciona (seção 3). Crie uma conta gratuita direto
   no site da OutSystems se ainda não tiver.
 - **O11 (plataforma clássica):** se você já tem acesso via trabalho/estudo.
-  O MCP oficial **não cobre O11** ainda — pra essa versão, use a técnica
-  alternativa da seção 5 (Block + high-code).
+  Hoje existe MCP oficial pra O11 também, mas é outra coisa: roda **local,
+  dentro do Service Studio** (11.55.91+), em porta dinâmica no loopback e
+  **sem autenticação**, com escopo no módulo que está aberto — não no ambiente
+  inteiro. Fica em [OutSystems/outsystems11-mcp](https://github.com/OutSystems/outsystems11-mcp);
+  não chegamos a rodá-lo, então aqui não tem medição nossa dele. A técnica
+  alternativa da seção 5 (Block + high-code) continua valendo e não depende
+  de MCP nenhum.
 
 **Cuidado:** se o ambiente disponível for o **tenant da empresa**, trate
 tudo como código de cliente — não publique nada em repositório público,
