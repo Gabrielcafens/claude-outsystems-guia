@@ -27,6 +27,7 @@ Windows) e salve o arquivo lá dentro como `SKILL.md`.
 | [outsystems-block-component](skills/outsystems-block-component.md) | componente em TypeScript dirigido por um Block, a técnica da seção 6 |
 | [outsystems-html-email](skills/outsystems-html-email.md) | e-mail em HTML saindo de um app OutSystems |
 | [outsystems-agent-session](skills/outsystems-agent-session.md) | dirigir um ambiente por um agente sem queimar cota |
+| [outsystems-screen-reader](skills/outsystems-screen-reader.md) | mandar no que o leitor de tela anuncia, num widget que não é seu |
 
 **[instructions/](instructions/)** — regra permanente, que vale em todo turno
 sem ninguém pedir. [`outsystems-frontend.CLAUDE.md`](instructions/outsystems-frontend.CLAUDE.md)
