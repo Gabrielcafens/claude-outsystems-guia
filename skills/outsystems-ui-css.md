@@ -39,6 +39,28 @@ Where it goes: Studio → **Interface → Themes** → the theme's stylesheet (s
 Service Studio). To reuse across apps, put the CSS in a Library's theme and consume that theme. To
 apply a by-class rule, the class goes in the widget's **Style Classes** property.
 
+## Before blaming the cascade, check the widget's Styles tab
+
+Service Studio writes the **Width** and **Height** fields of a widget's Styles tab as an **inline
+style** on the element. Inline beats every class, so your rule for the same property is dead on
+arrival:
+
+```html
+<img class="app-logo" src="…" style="height: 196px;">
+```
+
+DevTools shows your declaration struck through, which normally reads as "a more specific selector
+won" and sends you hunting for that selector. There is none. The value came from a field in the
+editor, and no selector you write can outrank it.
+
+Clear the field and let the class govern. `!important` also works here and is the wrong move: you
+would be spending the escape hatch on a value you could simply delete, and the next person finds an
+`!important` with no reason attached.
+
+The giveaway that you are in this case rather than a real cascade fight: the property you are losing
+is one the editor has a field for — size, spacing, alignment — and adding `max-width` or some other
+near-miss property "improves" things without fixing them.
+
 ## When the computed style lies
 
 This is the trap worth knowing before you need it, because every debugging instinct points the
