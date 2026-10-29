@@ -44,7 +44,7 @@ Cria um Block chamado "HelloAiBlock" numa tela de teste (ou módulo novo de sand
 > - OnDestroy → `$parameters.Instance.destroy()`
 >
 > Publish: sucesso (revision 2), sem erros.
-> URL: https://personal-zkgbsms6-dev.outsystems.app/AiSandbox
+> URL: https://&lt;tenant&gt;-dev.outsystems.app/AiSandbox
 >
 > Nota prática: o objeto `AiSandbox.HelloAiBlock` ainda não existe em runtime
 > — falta o script JS que o define. Sem isso o OnReady vai rebentar.
