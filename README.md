@@ -463,8 +463,8 @@ ainda não foi validado por nós, só pelo autor original.
 - [ ] Testar o mesmo padrão em O11 Traditional/Reactive de verdade
 
 > O log do projeto os-prep (caso de teste real de edição/publicação via
-> MCP, revisões 8–26) foi movido pra fora deste README — ver
-> [`os-prep-quiz-log/`](os-prep-quiz-log/).
+> MCP, revisões 8–26) não faz parte deste repositório: é registro de um
+> projeto pessoal, fora do escopo do guia.
 
 ## 13. Segredos e credenciais
 

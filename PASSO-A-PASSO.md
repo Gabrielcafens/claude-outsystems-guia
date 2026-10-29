@@ -266,4 +266,3 @@ cota.
 **Documentação/logs deste repositório:**
 - [README.md](README.md) — guia de estudo completo (MCP + técnica + POC)
 - [poc-hello-ai-block-transcript.md](poc-hello-ai-block-transcript.md) — transcript real do POC HelloAiBlock
-- [os-prep-quiz-log/](os-prep-quiz-log/) — log do projeto real usado como caso de teste do MCP
